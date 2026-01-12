@@ -37,7 +37,7 @@ coding!
 - Alex Thomas - Scrum Master: [GitHub](https://github.com/BagelTime) / [LinkedIn](https://linkedin.com/in/ajt11176)
 - Wael Kweder - Frontend Developer: [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kuwaider-a63836339/)
 - Emily Carr - Web Developer: [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
-
+- Bryan Hoyem - Developer: [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
 
 - Teammate name #2: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
 
