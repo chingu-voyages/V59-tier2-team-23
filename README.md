@@ -39,8 +39,7 @@ coding!
 - Emily Carr - Web Developer: [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
 - Bryan Hoyem - Developer: [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
 - Ivan Rebolledo - Frontend Developer: [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
-
-- Teammate name #2: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+- Jugraj Singh Bali - Web Developer : [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
 
   ...
 
