@@ -40,7 +40,4 @@ coding!
 - Bryan Hoyem - Developer: [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
 - Ivan Rebolledo - Frontend Developer: [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
 - Jugraj Singh Bali - Web Developer : [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
-
-  ...
-
-- Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+- Matthew Neie - Web Developer : [GitHub](https://github.com/MatthewNeie) / [LinkedIn](https://www.linkedin.com/in/matthew-neie)
