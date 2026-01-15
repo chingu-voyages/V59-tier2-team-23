@@ -1,43 +1,26 @@
 # Team Decision Log
 
-Update this with key decisions your team makes that you need to make...and 
-remember. The entries in this table are only examples. You may add, change, or
-delete these based on the needs of your team.
+## Open Decisions
+These are decisions that are still open.
 
-To set this up add each teammates name in the `teammate name` column. Each 
-team member should Place an 'X' under their name to vote for the ideas 
-you like the best.
+| No. | Item | Matthewneie | Yangs | Alex | Devim#0x10 | TheDevGuy78 | Denys |
+|-----|------|-------------|-------|------|------------|------------|--------|
+|     |      |             |       |      |            |            |        |
+|     |      |             |       |      |            |            |        |
 
-| No. | Question/Option | Teammate name | Teammate name | Teammate name | Teammate name | Teammate name | Teammate name |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Team meeting schedule | | | | | | |
-|   |	- Sprint Planning Sunday@9:00 a.m. CST | | | | | | |
-|   |	- Knowledge Xfer as needed | | | | | | |
-|   |	- Working Session Thursday@4:00 p.m. CST | | | | | | |
-| 2	| Project Backlog Tool | | | | | | |
-|   |	- Notion | | | | | | |
-|   |	- Jira | | | | | | |
-| 3	| Technical Stack (vote by adding your pref. in the cell under your name) | | | | | | |
-|   |	- BE Language | | | | | | |
-|   |	- FE Language | | | | | | |
-|   |	- FE Framework | | | | | | |
-|   |	- ML Framework | | | | | | |
-|   |	- Visualization/Graphics package (if required, e.g. D3, Nivo, etc.) | | | | | | |
-| 4	| Where to host the app? | | | | | | |
-|   |	- Heroku (suitable for FE, BE, & Postgres) | | | | | | |
-|   |	- Netlify (suitable only for FE) | | | | | | |
-|   |	- Vercel (suitable only for FE) | | | | | | |
-|   |	- Mongo Atlas (suitable only for MongoDB) | | | | | | |
-| 5	| BE/FE repos organization | | | | | | |
-|   |	- Separate GitHub repos for each | | | | | | |
-|   |	- Single GitHub repo for both | | | | | | |
-| 6	| Wireframing tool | | | | | | |
-|   |	- Paper & pencil | | | | | | |
-|   |	- Adobe XD | | | | | | |
-|   |	- Balsamiq | | | | | | |
-|   |	- Figma | | | | | | |
-| 7	| Who works in which part of the app? | | | | | | |
-|   | - BE (not applicable for Tier 1 teams) | | | | | | |
-|   |	- FE | | | | | | |
-| 8	| ... | | | | | | |
-| n | ... | | | | | | |
+---
+
+## Resolved Decisions
+These are decisions that have been made.
+
+| No. | Item | Decision | Date |
+|----:|------|----------|------|
+| 1 | Meeting Schedule | Live meetings will be held Monday–Friday (not Saturday or Sunday), unless there is a special case that needs to be addressed. | 01/14/2026 |
+| 2 | Initial Backlog Creation and Refinement Meeting | This meeting will be held at 4:00 PM EDT on January 16. <br> Discord Time: `<t:1768597200:f>` | 01/14/2026 |
+| 3 | Planning Meetings | Held weekly on Mondays at 12:00 PM EDT. <br> Discord Time: `<t:1769187600:T>` | 01/14/2026 |
+| 4 | Review and Retrospective Meetings | Held weekly on Fridays at 12:00 PM EDT. <br> Discord Time: `<t:1769187600:T>` | 01/14/2026 |
+| 5 | Daily Standups | Live on Tuesday and Thursday at 12:00 PM EDT. <br> Monday, Wednesday, and Friday via chat in the Standup channel using the `/standup` command, due by 12:00 PM EDT. <br> Discord Time: `<t:1769187600:T>` | 01/14/2026 |
+| 6 | Tracking Tool | GitHub Projects will be used for work tracking. <br> https://github.com/orgs/chingu-voyages/projects/377/views/1 | 01/14/2026 |
+| 7 | Development Workflow | Branch from `dev` → Code → Create PR → Merge back to `dev` once approved → Test on the dev site → Merge to `main` once approved. | 01/14/2026 |
+| 8 | Technology Stack | **Languages:** React, Tailwind CSS, TypeScript <br> **Routing:** React Router or Next.js <br> **Hosting:** Netlify | 01/14/2026 |
+| 9 | Definition of Ready (DoR) and Definition of Done (DoD) | **Definition of Ready:** Has story points, acceptance criteria, a clear description, and no outstanding questions. <br> **Definition of Done:** Tested on the dev site, approved by the Product Owner, and meets all acceptance criteria. | 01/14/2026 |
