@@ -3,12 +3,10 @@
 ## Open Decisions
 These are decisions that are still open.
 
-| No. | Item | Matthewneie | Yangs | Alex | Devim#0x10 | TheDevGuy78 | Denys |
-|-----|------|-------------|-------|------|------------|------------|--------|
-|     |      |             |       |      |            |            |        |
-|     |      |             |       |      |            |            |        |
+| No. | Item | Decision |
+|----:|------|----------|
+| | | |
 
----
 
 ## Resolved Decisions
 These are decisions that have been made.
