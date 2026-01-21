@@ -1,13 +1,13 @@
 import type { JSX } from "react";
 
 type Props = {
-    className?: string;
-} & React.HTMLAttributes<HTMLDivElement>
+  className?: string;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Home({ className = "", ...props }: Props): JSX.Element {
-    return (
-        <div className={`${className}`} {...props}>
-            <h1 className="text-[4rem] ">IAM HOME</h1>
-        </div>
-    );
+  return (
+    <div className={`${className} h-9/12`} {...props}>
+      <h1 className="text-[4rem] ">IAM HOME</h1>
+    </div>
+  );
 }
