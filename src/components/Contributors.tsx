@@ -34,7 +34,7 @@ export default function Contributors() {
       avatar: "/images/contibutors/Ivan.jpeg",
       name: "Ivan Rebolledo",
       role: "Frontend Developer",
-      link: "https://github.com/ivannissimrch",
+      link: "https://www.linkedin.com/in/ivan-rebolledo-012b17244/",
       github: "https://github.com/ivannissimrch",
     },
     {
