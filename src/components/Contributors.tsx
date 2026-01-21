@@ -68,7 +68,7 @@ export default function Contributors() {
 
           <div className="m-2">
             <p className=" text-sm font-medium">{contributor.name}</p>
-            <p className="text-xs text-gray-400">{contributor.role}</p>
+            <p className="text-xs text-gray-400 w-28">{contributor.role}</p>
           </div>
           <div className="flex gap-2">
             <a className="text-sm" href={contributor.github}>
