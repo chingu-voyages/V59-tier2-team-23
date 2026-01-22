@@ -7,7 +7,7 @@ type Props = {
 export default function Home({ className = "", ...props }: Props): JSX.Element {
   return (
     <div className={`${className} h-8/12 flex flex-col items-center w-4/5 mx-auto text-center`} {...props}>
-      <img src="public\images\temp-logo.png" alt="App Logo" className="h-1/4"/>
+      <img src="\images\temp-logo.png" alt="App Logo" className="h-1/4"/>
       <h1 className="text-[2rem] sm:text-[3rem] md:text-[4rem]">WELCOME TO QUIZEST</h1>
       <p className="text-[1.2rem]">Explanation / description / promotion of the app here. Feel free to come up with ideas for this section.</p>
       {/* <select className="border p-2 rounded mt-[10px]">
