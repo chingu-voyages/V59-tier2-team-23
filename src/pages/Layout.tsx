@@ -10,7 +10,7 @@ type Props = {
 // Can we rename this to Layout?
 export default function Layout({ className = "", ...props }: Props): JSX.Element {
   return (
-    <div className={`page ${className}`} {...props}>
+    <div className={`page flex flex-col ${className}`} {...props}>
       <PageHeader />
       <Outlet></Outlet>{" "}
       {/* <- pages will be rendered here. For example: if you are at /roles then <Roles/> will be placed in <Outlet/>'s position */}

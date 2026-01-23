@@ -28,12 +28,12 @@ export default function Roles({
   };
 
   return (
-    <div className={`${className} flex flex-col items-center justify-center min-h-screen px-4 py-8`} {...props}>
+    <div className={`${className} flex flex-col items-center justify-center px-4 py-8`} {...props}>
       <div className="max-w-md w-full bg-gray-100 rounded-lg shadow-lg p-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-2">Choose a Role (Title)</h1>
           <p className="text-sm text-gray-600">
-            (Expansion Paragraph) If you are not sure which role to choose, hover over it for more 
+            (Expansion Paragraph) If you are not sure which role to choose, hover over it for more
             info (but the pop-up card would have a lot to say anyways)
           </p>
         </div>
@@ -45,11 +45,10 @@ export default function Roles({
               <button
                 key={role.id}
                 onClick={() => setSelectedRole(role.id)}
-                className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
-                  selectedRole === role.id
-                    ? "bg-gray-400 border-gray-500 text-white"
-                    : "bg-white border-gray-300 hover:border-gray-400"
-                }`}
+                className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${selectedRole === role.id
+                  ? "bg-gray-400 border-gray-500 text-white"
+                  : "bg-white border-gray-300 hover:border-gray-400"
+                  }`}
               >
                 {role.title}
               </button>
@@ -60,11 +59,10 @@ export default function Roles({
         <button
           onClick={handleContinue}
           disabled={!selectedRole}
-          className={`w-full py-3 rounded-lg font-semibold transition-all ${
-            selectedRole
-              ? "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
+          className={`w-full py-3 rounded-lg font-semibold transition-all ${selectedRole
+            ? "bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
+            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
         >
           Continue
         </button>
