@@ -1,5 +1,5 @@
 
-type Answer = {
+export type Answer = {
     Qid: number,
     selectedOption: string
     correct: boolean
@@ -78,4 +78,13 @@ export function getGrade(result: Result): string {
 export function getCorrect(result: Result): String {
     const stats = result.stats;
     return stats.correct + "/" + stats.total;
+}
+
+type Option = "A" | "B" | "C" | "D";
+export function getQA(scope: Scope, Qid: number) {
+    const [flashcard] = scope.flashcards.filter((f) => f.id == Qid);
+    return {
+        question: flashcard.question,
+        answer: flashcard.answer + ". " + flashcard.options[flashcard.answer as Option]
+    };
 }

@@ -4,6 +4,10 @@
     --color-surface: #353535;
 }
 
+@theme {
+    --color-result: #D9D9D9;
+}
+
 @layer base {
 
     html,
