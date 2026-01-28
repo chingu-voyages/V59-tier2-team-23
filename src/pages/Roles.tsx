@@ -21,34 +21,44 @@ const roles = [
 
 export default function Roles({ className = "", ...props }: Props): JSX.Element {
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
-  const [infoIsDisplayed, setInfoIsDisplayed] = useState<boolean>(false)
+  const [showInfoPopup, setShowInfoPopup] = useState<boolean>(false)
   const navigate = useNavigate()
 
+  const selectedRoleData = roles.find((role) => role.id === selectedRole) || null
+
   const handleDisplayPopup = () => {
-    setInfoIsDisplayed(true)
-    if (selectedRole) {
-      const currRole = roles.find((role) => role.id === selectedRole)
-      console.log(currRole?.description)
-    }
+    setShowInfoPopup(true)
+    console.log(selectedRoleData?.description || "no role selected")
   }
+
   const handleContinue = () => {
     if (selectedRole) {
       navigate(`/quiz/${selectedRole}`)
     }
   }
 
+  const closePopup = () => {
+    setShowInfoPopup(false)
+  }
+
   return (
     <>
-      {selectedRole && infoIsDisplayed && <RoleInfo></RoleInfo>}
+      {showInfoPopup && selectedRole && (
+        <RoleInfo
+          description={selectedRoleData?.description || "data not found"}
+          closePopup={closePopup}
+        />
+      )}
+
       <div
         className={`${className} flex flex-col items-center justify-center px-4 py-8`}
         {...props}>
         <div className='max-w-md w-full bg-gray-100 rounded-lg shadow-lg p-8'>
           <div className='mb-6'>
-            <h1 className='text-2xl font-bold mb-2'>Choose a Role (Title)</h1>
+            <h1 className='text-2xl font-bold mb-2'>Choose a Role</h1>
             <p className='text-sm text-gray-600'>
-              (Expansion Paragraph) If you are not sure which role to choose, hover over it for more
-              info (but the pop-up card would have a lot to say anyways)
+              To learn more about any of the roles, please select a role and click "Learn More About
+              Role" before proceeding. Otherwise you may simply select and role and proceed.
             </p>
           </div>
 
@@ -78,7 +88,7 @@ export default function Roles({ className = "", ...props }: Props): JSX.Element 
                 ? "border border-blue-500  hover:border-blue-600 hover:text-blue-600 text-blue-500 cursor-pointer"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}>
-            Click for More Info
+            Learn More About Role
           </button>
           <p className='text-center text-blue-600 mb-2'> or </p>
           <button
