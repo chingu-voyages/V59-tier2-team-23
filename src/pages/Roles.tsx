@@ -43,16 +43,16 @@ export default function Roles({ className = "", ...props }: Props): JSX.Element 
 
   return (
     <>
-      {showInfoPopup && selectedRole && (
-        <RoleInfo
-          description={selectedRoleData?.description || "data not found"}
-          closePopup={closePopup}
-        />
-      )}
-
       <div
         className={`${className} flex flex-col items-center justify-center px-4 py-8`}
         {...props}>
+        {showInfoPopup && selectedRole && (
+          <RoleInfo
+            description={selectedRoleData?.description || "data not found"}
+            closePopup={closePopup}
+          />
+        )}
+
         <div className='max-w-md w-full bg-gray-100 rounded-lg shadow-lg p-8'>
           <div className='mb-6'>
             <h1 className='text-2xl font-bold mb-2'>Choose a Role</h1>
