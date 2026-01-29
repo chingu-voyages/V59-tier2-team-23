@@ -41,8 +41,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (error) {
       setErrorMessage(error.message);
+      setIsAuthLoading(false);
     }
-    setIsAuthLoading(false);
   }
 
   async function signOut() {
