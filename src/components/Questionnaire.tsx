@@ -45,10 +45,6 @@ export default function Questionnaire() {
   const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
-  const [lastAnswerCorrect, setLastAnswerCorrect] = useState<boolean | null>(
-    null,
-  );
-
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
@@ -113,6 +109,10 @@ export default function Questionnaire() {
     );
   }
 
+  if (!selectedRole) return null;
+
+  const totalQuestions = selectedRole.flashcards.length;
+
   function QuestionCard({
     question,
     selectedOption,
@@ -122,10 +122,7 @@ export default function Questionnaire() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
-          <Progress
-            current={currentIndex + 1}
-            total={selectedRole.flashcards.length}
-          />
+          <Progress current={currentIndex + 1} total={totalQuestions} />
           <h3 className="text-lg font-semibold text-center p-3 rounded-lg">
             {question.question}
           </h3>
@@ -174,10 +171,7 @@ export default function Questionnaire() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
-          <Progress
-            current={currentIndex + 1}
-            total={selectedRole.flashcards.length}
-          />
+          <Progress current={currentIndex + 1} total={totalQuestions} />
           <h3 className="text-lg font-semibold text-center">
             {question.question}
           </h3>
