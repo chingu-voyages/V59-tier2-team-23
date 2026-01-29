@@ -13,13 +13,15 @@ interface AuthContextType {
   session: Session | null;
   isAuthLoading: boolean;
   errorMessage: string | null;
-  signInWithGoogle: () => Promise<void>;
+  signIn: (authProvider: "google" | "github") => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
+
+export type LoginProvider = "google" | "github";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -29,17 +31,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  async function signInWithGoogle() {
+  async function signIn(authProvider: LoginProvider) {
     setIsAuthLoading(true);
     setErrorMessage(null);
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: authProvider,
       options: { redirectTo: `${window.location.origin}/roles` },
     });
+
     if (error) {
       setErrorMessage(error.message);
+      setIsAuthLoading(false);
     }
-    setIsAuthLoading(false);
   }
 
   async function signOut() {
@@ -76,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         user,
         isAuthLoading,
         signOut,
-        signInWithGoogle,
+        signIn,
         session,
         errorMessage,
       }}
