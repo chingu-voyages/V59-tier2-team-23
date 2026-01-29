@@ -1,11 +1,14 @@
 import type { JSX } from "react";
 import { LoginButtons, WelcomeMessage } from "../components";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Home({ className = "", ...props }: Props): JSX.Element {
+  const { logGuess, isGuessLogin } = useAuth();
   return (
     <div
       className={`${className} h-auto flex flex-col items-center w-4/5 mx-auto text-center min-w-42.5`}
@@ -26,7 +29,20 @@ export default function Home({ className = "", ...props }: Props): JSX.Element {
         <br />
         To get started, simply click the button below.
       </p>
-      <LoginButtons />
+
+      {!isGuessLogin && (
+        <>
+          {" "}
+          <LoginButtons />
+          <Link
+            to="/roles"
+            className="border p-2 rounded mt-2.5"
+            onClick={logGuess}
+          >
+            Login as guess
+          </Link>
+        </>
+      )}
     </div>
   );
 }

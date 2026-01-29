@@ -18,6 +18,7 @@ export default function App(): JSX.Element {
             <Route path="*" element={<Fallback />} />
           </Route>
         </Route>
+        {/* </Route> */}
       </Routes>
     </BrowserRouter>
   );
