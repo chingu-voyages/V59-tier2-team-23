@@ -18,27 +18,26 @@ interface RoleSelectorProps {
   onBegin: () => void;
 }
 
-interface ProgressProps {
-  current: number;
-  total: number;
-}
-
 interface QuestionCardProps {
   question: Flashcard;
   selectedOption: OptionKey | null;
   onSelect: (option: OptionKey) => void;
   onSubmit: () => void;
+  current: number;
+  total: number;
 }
 
 interface FeedbackProps {
   question: Flashcard;
   userAnswer: UserAnswer;
   onNext: () => void;
+  current: number;
+  total: number;
 }
 
-interface ResultsProps {
-  result: QuestionnaireResult;
-}
+// interface ResultsProps {
+//   result: QuestionnaireResult;
+// }
 
 export default function Questionnaire() {
   const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
@@ -100,29 +99,21 @@ export default function Questionnaire() {
     );
   }
 
-  function Progress({ current, total }: ProgressProps) {
-    return (
-      <div className="text-center text-sm text-gray-500 mb-4">
-        Question <span className="font-semibold">{current}</span> /{" "}
-        <span className="font-semibold">{total}</span>
-      </div>
-    );
-  }
-
-  if (!selectedRole) return null;
-
-  const totalQuestions = selectedRole.flashcards.length;
-
   function QuestionCard({
     question,
     selectedOption,
     onSelect,
     onSubmit,
+    current,
+    total,
   }: QuestionCardProps) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
-          <Progress current={currentIndex + 1} total={totalQuestions} />
+          <div className="text-center text-sm text-gray-500">
+            Question <span className="font-semibold">{current}</span> /{" "}
+            <span className="font-semibold">{total}</span>
+          </div>
           <h3 className="text-lg font-semibold text-center p-3 rounded-lg">
             {question.question}
           </h3>
@@ -167,11 +158,20 @@ export default function Questionnaire() {
     );
   }
 
-  function Feedback({ question, userAnswer, onNext }: FeedbackProps) {
+  function Feedback({
+    question,
+    userAnswer,
+    onNext,
+    current,
+    total,
+  }: FeedbackProps) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-6">
-          <Progress current={currentIndex + 1} total={totalQuestions} />
+          <div className="text-center text-sm text-gray-500">
+            Question <span className="font-semibold">{current}</span> /{" "}
+            <span className="font-semibold">{total}</span>
+          </div>
           <h3 className="text-lg font-semibold text-center">
             {question.question}
           </h3>
@@ -219,7 +219,7 @@ export default function Questionnaire() {
     );
   }
 
-  function Results({ result }: ResultsProps) {
+  function Results() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="w-full max-w-md space-y-4 text-center">
@@ -248,6 +248,8 @@ export default function Questionnaire() {
 
   if (!selectedRole) return null;
 
+  const totalQuestions = selectedRole.flashcards.length;
+
   const currentQuestion = selectedRole.flashcards[currentIndex];
 
   if (step === "QUESTION") {
@@ -255,6 +257,8 @@ export default function Questionnaire() {
       <QuestionCard
         question={currentQuestion}
         selectedOption={selectedOption}
+        current={currentIndex + 1}
+        total={totalQuestions}
         onSelect={setSelectedOption}
         onSubmit={() => {
           if (!selectedOption) return;
@@ -283,6 +287,8 @@ export default function Questionnaire() {
       <Feedback
         question={lastQuestion}
         userAnswer={lastUserAnswer}
+        current={currentIndex + 1}
+        total={totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
 
@@ -307,7 +313,7 @@ export default function Questionnaire() {
 
     console.log(result);
 
-    return <Results result={result} />;
+    return <Results />;
   }
 
   return null;
