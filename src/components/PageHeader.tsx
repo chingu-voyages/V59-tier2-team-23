@@ -13,12 +13,16 @@ export default function PageHeader({
   ...props
 }: Props): JSX.Element {
   const { user, signOut, isAuthLoading, isGuessLogin } = useAuth();
-
   const { date } = useDate();
-  const navOptions: string[] =
-    (!isAuthLoading && user) || isGuessLogin
-      ? ["home", "roles", "logout"]
-      : ["home"]; // for each element in navOptions a NavLink is created. (to add more navigations just add them to navOptions)
+  let navOptions: string[] = ["home"];
+
+  if (!isAuthLoading && user) {
+    navOptions = ["home", "roles", "logout"];
+  }
+  if (!isAuthLoading && isGuessLogin) {
+    navOptions = ["home", "roles"];
+  }
+
   return (
     <>
       <header

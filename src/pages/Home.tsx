@@ -8,7 +8,7 @@ type Props = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Home({ className = "", ...props }: Props): JSX.Element {
-  const { logGuess, isGuessLogin } = useAuth();
+  const { logGuess, isGuessLogin, user } = useAuth();
   return (
     <div
       className={`${className} h-auto flex flex-col items-center w-4/5 mx-auto text-center min-w-42.5`}
@@ -30,18 +30,11 @@ export default function Home({ className = "", ...props }: Props): JSX.Element {
         To get started, simply click the button below.
       </p>
 
-      {!isGuessLogin && (
-        <>
-          {" "}
-          <LoginButtons />
-          <Link
-            to="/roles"
-            className="border p-2 rounded mt-2.5"
-            onClick={logGuess}
-          >
-            Login as guess
-          </Link>
-        </>
+      {!isGuessLogin && <LoginButtons />}
+      {!user && !isGuessLogin && (
+        <Link to="/roles" className="underline mb-4 " onClick={logGuess}>
+          Login as guess
+        </Link>
       )}
     </div>
   );
