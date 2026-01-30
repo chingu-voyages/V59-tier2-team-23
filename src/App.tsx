@@ -3,7 +3,7 @@ import { Layout, Home, Fallback } from "./pages";
 import type { JSX } from "react";
 import { ProtectedRoute } from "./components";
 import Questionnaire from "./components/Questionnaire";
-import Geminitest from "./pages/geminitest";
+import Geminitest from "./pages/Geminitest";
 
 export default function App(): JSX.Element {
 
