@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import { Layout, Home, Roles, Fallback, Aipage, Geminitest } from "./pages";
+import { Layout, Home, Roles, Fallback, Geminitest } from "./pages";
 import type { JSX } from "react";
 import { ProtectedRoute } from "./components";
 
@@ -11,7 +11,6 @@ export default function App(): JSX.Element {
           {/* all pages will be rendered within <Page/> to ensure header/footer consistency */}
           <Route index element={<Home />} /> {/* home page is the index page */}
           <Route path="home" element={<Home />} />
-          <Route path="aipage" element={<Aipage />} />
           <Route path ="geminitest" element={<Geminitest />} />
           <Route element={<ProtectedRoute />}>
             <Route path="roles" element={<Roles />} />

@@ -7,8 +7,8 @@ type Props = {
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Geminitest({
-  className = "",
-  ...props
+  // className = "",
+  // ...props
 }: Props): JSX.Element {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -35,11 +35,9 @@ export default function Geminitest({
         Send
       </button>
 
-      {output && (
-        <div className="border p-2 bg-gray-50 whitespace-pre-wrap">
+        <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
           {output}
         </div>
-      )}
     </div>
   );
 }
