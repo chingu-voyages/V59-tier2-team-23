@@ -166,16 +166,17 @@ export default function Questionnaire() {
     className?: string,
     result: QuestionnaireResult,
     onReview: (answer: UserAnswer, index: number) => void
+    onRetry: () => void
   } & React.HTMLAttributes<HTMLDivElement>
 
-  function Results({ className = '', result, onReview, ...props }: ResultProps): JSX.Element {
+  function Results({ className = '', result, onRetry, onReview, ...props }: ResultProps): JSX.Element {
     const stats = aggregate(result!.userAnswers);
     return (
       <div className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`} {...props}>
         <h1 className='text-[1.5rem] text-center  mb-[1rem]'>{selectedRole?.role} prep results</h1>
         <div className='flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]'>
           <ResultStats stats={stats} />
-          <button className='h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white'>RETRY</button>
+          <button onClick={onRetry} className='h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white'>Retry</button>
         </div>
         <div className='mb-[0.5rem] sm:mb-[1.5rem] '>If you would like to review any of the questions, you can select them from the list below.</div>
         <ResultsGrid onReview={onReview} className='mb-[2.5rem]' result={result} />
@@ -369,7 +370,16 @@ export default function Questionnaire() {
         roleId: roles.indexOf(selectedRole) + 1,
         userAnswers,
       });
-    return <Results onReview={(answer: UserAnswer, index: number) => {
+    return <Results onRetry={(): void => {
+      setCurrentIndex(0);
+      setUserAnswers([]);
+      setSelectedOption(null);
+      setLastQuestion(null);
+      setLastUserAnswer(null);
+      setSubmitted(false);
+      setLastResult(null);
+      setStep("QUESTION");
+    }} onReview={(answer: UserAnswer, index: number) => {
       const question = selectedRole.flashcards[index];
       setLastQuestion(question);
       setLastUserAnswer(answer);
