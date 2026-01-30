@@ -1,9 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import { Layout, Home, Roles, Fallback, Geminitest } from "./pages";
+import { Layout, Home, Fallback } from "./pages";
 import type { JSX } from "react";
 import { ProtectedRoute } from "./components";
+import Questionnaire from "./components/Questionnaire";
+import Geminitest from "./pages/geminitest";
 
 export default function App(): JSX.Element {
+
   return (
     <BrowserRouter>
       <Routes>
@@ -13,7 +16,7 @@ export default function App(): JSX.Element {
           <Route path="home" element={<Home />} />
           <Route path ="geminitest" element={<Geminitest />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="roles" element={<Roles />} />
+            <Route path="roles" element={<Questionnaire />} />{/* wanted to make the path 'quiz' but we need to set the path in supabase first */}
             <Route path="*" element={<Fallback />} />
           </Route>
         </Route>

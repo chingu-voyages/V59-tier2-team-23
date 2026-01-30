@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { useState } from "react";
-import { geminiModel } from "../components/geminifunction";
+import { geminiModel } from "../components/Geminifunction";
 
 type Props = {
   className?: string;

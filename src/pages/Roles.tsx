@@ -8,10 +8,26 @@ type Props = {
 } & React.HTMLAttributes<HTMLDivElement>
 
 const roles = [
-  { id: "scrum-master", title: "Scrum Master", description: "info about the scrum master" },
-  { id: "product-owner", title: "Product Owner", description: "info about the product owner" },
-  { id: "ux-ui-designer", title: "UX/UI Designer", description: "info about the ui-ux designer" },
-  { id: "web-developer", title: "Web Developer", description: "info about the web-developer" },
+  {
+    id: "scrum-master",
+    title: "Scrum Master",
+    description: "info about the scrum master",
+  },
+  {
+    id: "product-owner",
+    title: "Product Owner",
+    description: "info about the product owner",
+  },
+  {
+    id: "ux-ui-designer",
+    title: "UX/UI Designer",
+    description: "info about the ui-ux designer",
+  },
+  {
+    id: "web-developer",
+    title: "Web Developer",
+    description: "info about the web-developer",
+  },
   {
     id: "python-developer",
     title: "Python Developer",
@@ -58,7 +74,8 @@ export default function Roles({ className = "", ...props }: Props): JSX.Element 
             <h1 className='text-2xl font-bold mb-2'>Choose a Role</h1>
             <p className='text-sm text-gray-600'>
               To learn more about any of the roles, please select a role and click "Learn More About
-              Role" before proceeding. Otherwise you may simply select and role and proceed.
+              Role" before proceeding. Otherwise simply select a role and click "Continue" to
+              proceed.
             </p>
           </div>
 
