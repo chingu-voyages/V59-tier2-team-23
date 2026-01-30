@@ -61,8 +61,8 @@ export default function Questionnaire() {
     onBegin,
   }: RoleSelectorProps) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+      <div className="sm:min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
           <h2 className="text-2xl font-bold text-center">Select Your Role</h2>
 
           <div className="space-y-3">
@@ -114,7 +114,7 @@ export default function Questionnaire() {
   }: QuestionCardProps) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
           <div className="text-center text-sm text-gray-500">
             Question <span className="font-semibold">{current}</span> /{" "}
             <span className="font-semibold">{total}</span>
@@ -195,7 +195,7 @@ export default function Questionnaire() {
   }: FeedbackProps) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
           <div className="text-center text-sm text-gray-500">
             Question <span className="font-semibold">{current}</span> /{" "}
             <span className="font-semibold">{total}</span>
