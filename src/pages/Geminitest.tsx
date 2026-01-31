@@ -1,17 +1,30 @@
 import type { JSX } from "react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { geminiModel } from "../components/Geminifunction";
+import existingQuestions from "../data/questions.json";
 
 type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export default function Geminitest({
-  // className = "",
-  // ...props
-}: Props): JSX.Element {
+export default function Geminitest(
+  {
+    // className = "",
+    // ...props
+  }: Props,
+): JSX.Element {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+
+    el.style.height = "auto"; // Reset height to auto to recalculate
+    const maxHeight = window.innerHeight * 0.5; // 50% of viewport height
+    el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
+  }, [input]);
 
   async function handleSend() {
     const result = await geminiModel.generateContent(input);
@@ -19,13 +32,52 @@ export default function Geminitest({
     setOutput(text);
   }
 
+  async function handleGenerateMoreScrumMasterQuestions() {
+    const prompt = `
+    Persona:
+
+* [ ] I am a Scrum Master
+* [ ] I am in either the early stages of building my career or I am looking to switch to a different job
+* [ ] I am an active member of Chingu, Inc.
+
+Input:
+* [ ] The Chingu, Inc. website is at https:chingu.io
+* [ ] The handbook for active participants in Chingu, Inc. is https://github.com/chingu-voyages/Handbook
+* [ ] I want to create a list of practice questions the Scrum Master role to help me practice for face-to-face interviews with prospective employers
+
+Additional Context:
+* Here are existing questions already in my library:
+${JSON.stringify(existingQuestions, null, 2)}
+
+Constraints:
+
+* [ ] Questions should be multiple choice questions.
+* [ ] Questions should be tailored for someone with a 10th grade high school education
+* [ ] Questions should reflect those that would be asked in a real interview.
+* [ ] Scrum Master questions should also be helpful for passing the CSM certification tests
+
+Format:
+
+* [ ] Generate exactly 20 new flashcards in the same format as the existing questions in my library.
+`;
+
+    const result = await geminiModel.generateContent(prompt);
+    const text = result.response.text();
+    setOutput(text);
+  }
+
   return (
     <div className="p-4 space-y-4">
       <textarea
-        className="border p-2 w-full"
+        ref={textareaRef}
+        className="border p-2 w-full resize-none"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="Ask Gemini something..."
+        style={{
+          maxHeight: "40vh",
+          overflowY: "auto",
+        }}
       />
 
       <button
@@ -35,9 +87,16 @@ export default function Geminitest({
         Send
       </button>
 
-        <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
-          {output}
-        </div>
+      <button
+        onClick={handleGenerateMoreScrumMasterQuestions}
+        className="bg-red-600 text-white mx-2 px-4 py-2 rounded"
+      >
+        Get More Scrum Master Questions
+      </button>
+
+      <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
+        {output}
+      </div>
     </div>
   );
 }
