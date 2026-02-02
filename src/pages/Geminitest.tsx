@@ -1,15 +1,7 @@
-import type { JSX } from "react";
 import { useState } from "react";
 import { geminiModel } from "../components/Geminifunction";
 
-type Props = {
-  className?: string;
-} & React.HTMLAttributes<HTMLDivElement>;
-
-export default function Geminitest({
-  // className = "",
-  // ...props
-}: Props): JSX.Element {
+export default function Geminitest() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
 
@@ -35,9 +27,9 @@ export default function Geminitest({
         Send
       </button>
 
-        <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
-          {output}
-        </div>
+      <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
+        {output}
+      </div>
     </div>
   );
 }
