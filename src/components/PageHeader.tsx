@@ -12,14 +12,14 @@ export default function PageHeader({
   className = "",
   ...props
 }: Props): JSX.Element {
-  const { user, signOut, isAuthLoading, isGuessLogin } = useAuth();
+  const { user, signOut, isAuthLoading, isGuestLogin } = useAuth();
   const { date } = useDate();
   let navOptions: string[] = ["home"];
 
   if (!isAuthLoading && user) {
     navOptions = ["home", "roles", "logout"];
   }
-  if (!isAuthLoading && isGuessLogin) {
+  if (!isAuthLoading && isGuestLogin) {
     navOptions = ["home", "roles"];
   }
 
