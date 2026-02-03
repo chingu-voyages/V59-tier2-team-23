@@ -1,14 +1,11 @@
 import type { JSX } from "react";
 import { LoginButtons, WelcomeMessage } from "../components";
-import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 
 type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 export default function Home({ className = "", ...props }: Props): JSX.Element {
-  const { logGuest, isGuestLogin, user } = useAuth();
   return (
     <div
       className={`${className} h-auto flex flex-col items-center w-4/5 mx-auto text-center min-w-42.5`}
@@ -30,16 +27,7 @@ export default function Home({ className = "", ...props }: Props): JSX.Element {
         To get started, simply click the button below.
       </p>
 
-      {!isGuestLogin && <LoginButtons />}
-      {!user && !isGuestLogin && (
-        <Link
-          to="/roles"
-          className="underline pb-5 hover:text-blue-700"
-          onClick={logGuest}
-        >
-          Login as guest
-        </Link>
-      )}
+      <LoginButtons />
     </div>
   );
 }

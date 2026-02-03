@@ -16,7 +16,8 @@ interface AuthContextType {
   signIn: (authProvider: "google" | "github") => Promise<void>;
   signOut: () => Promise<void>;
   isGuestLogin: boolean;
-  logGuest: () => void;
+  logInGuest: () => void;
+  logOutGuest: () => void;
 }
 
 interface AuthProviderProps {
@@ -37,6 +38,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function signIn(authProvider: LoginProvider) {
     setIsAuthLoading(true);
     setErrorMessage(null);
+    if (isGuestLogin) {
+      logOutGuest();
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: authProvider,
       options: { redirectTo: `${window.location.origin}/roles` },
@@ -58,8 +62,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsAuthLoading(false);
   }
 
-  function logGuest() {
+  function logInGuest() {
+    if (isGuestLogin) {
+      return;
+    }
     setIsGuestLogin(true);
+  }
+  function logOutGuest() {
+    setIsGuestLogin(false);
   }
 
   useEffect(() => {
@@ -90,7 +100,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         session,
         errorMessage,
         isGuestLogin,
-        logGuest,
+        logInGuest,
+        logOutGuest,
       }}
     >
       {children}
