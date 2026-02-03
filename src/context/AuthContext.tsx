@@ -53,8 +53,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   async function signOut() {
-    setIsAuthLoading(true);
     setErrorMessage(null);
+    setUser(null);
+    setSession(null);
     const { error } = await supabase.auth.signOut();
     if (error) {
       setErrorMessage(error.message);
