@@ -93,7 +93,6 @@ Format:
       >
         Get More Scrum Master Questions
       </button>
-
       <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
         {output}
       </div>

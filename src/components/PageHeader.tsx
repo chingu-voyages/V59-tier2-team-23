@@ -12,23 +12,29 @@ export default function PageHeader({
   className = "",
   ...props
 }: Props): JSX.Element {
-  const { user, signOut, isAuthLoading } = useAuth();
-
+  const { user, signOut, isAuthLoading, isGuestLogin } = useAuth();
   const { date } = useDate();
-  const navOptions: string[] =
-    !isAuthLoading && user ? ["home", "roles", "logout"] : ["home"]; // for each element in navOptions a NavLink is created. (to add more navigations just add them to navOptions)
+  let navOptions: string[] = ["home"];
+
+  if (!isAuthLoading && user) {
+    navOptions = ["home", "roles", "logout"];
+  }
+  if (!isAuthLoading && isGuestLogin) {
+    navOptions = ["home", "roles"];
+  }
+
   return (
     <>
       <header
-        className={`w-full px-[1rem] py-[0.75rem] sm:px-[1.5rem] bg-[var(--color-surface)] text-white text-nowrap leading-none flex flex-col gap-[1rem] justify-between  ${className}`}
+        className={`w-full px-4 py-3 sm:px-6 bg-(--color-surface) text-white text-nowrap leading-none flex flex-col gap-4 justify-between  ${className}`}
         {...props}
       >
         <p className="text-end">{format(date)}</p>
-        <nav className="flex justify-between items-end gap-[0.5rem]">
+        <nav className="flex justify-between items-end gap-2">
           <NavLink to="/" className="font-bold text-[1.5rem]">
             Quizest
           </NavLink>
-          <ul className="flex justify-between gap-[1rem] overflow-x-auto overflow-y-hidden">
+          <ul className="flex justify-between gap-4 overflow-x-auto overflow-y-hidden">
             {navOptions.map((nav) => (
               <li key={nav} className="capitalize">
                 {nav === "logout" ? (

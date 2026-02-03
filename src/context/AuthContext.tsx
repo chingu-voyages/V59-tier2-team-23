@@ -15,6 +15,8 @@ interface AuthContextType {
   errorMessage: string | null;
   signIn: (authProvider: "google" | "github") => Promise<void>;
   signOut: () => Promise<void>;
+  isGuestLogin: boolean;
+  logGuest: () => void;
 }
 
 interface AuthProviderProps {
@@ -30,6 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isGuestLogin, setIsGuestLogin] = useState<boolean>(false);
 
   async function signIn(authProvider: LoginProvider) {
     setIsAuthLoading(true);
@@ -53,6 +56,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setErrorMessage(error.message);
     }
     setIsAuthLoading(false);
+  }
+
+  function logGuest() {
+    setIsGuestLogin(true);
   }
 
   useEffect(() => {
@@ -82,6 +89,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         signIn,
         session,
         errorMessage,
+        isGuestLogin,
+        logGuest,
       }}
     >
       {children}
