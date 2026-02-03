@@ -31,12 +31,12 @@ export async function getUserAnswers() {
   return data;
 }
 
-export async function getRoleQuestions(selectedId: string) {
+export async function getRoleQuestions(selectedRoleId: string) {
   const { data } = await supabase
     .from("questions")
     .select("*, answers(*)")
-    .eq("role_id", selectedId);
-  console.log(data);
+    .eq("role_id", selectedRoleId);
+  console.log("selected role questions", data);
   return data;
 }
 
@@ -48,7 +48,11 @@ export async function getUserInfo() {
   return user;
 }
 
-export async function startSession() {
+export async function startSession(
+  roleId: string,
+  score: number,
+  totalQuestions: number,
+) {
   //you need to be login so you can get the user
   const {
     data: { user },
@@ -59,8 +63,9 @@ export async function startSession() {
       .from("sessions")
       .insert({
         user_id: user?.id,
-        role_id: "12258174-d9a6-458c-8b61-2c2f469dfd1c",
-        score: -1,
+        role_id: roleId,
+        score: score,
+        total_questions: totalQuestions,
       })
       .select();
     console.log("Current sesion data", data);
@@ -73,7 +78,6 @@ export async function trackUserAnswers(
   answerId: string,
   isCorrect: boolean,
 ) {
-  //updates users questions, Do I need role Id? but im already getting the question for that role.....
   const { data } = await supabase
     .from("user_answers")
     .insert({
@@ -86,4 +90,11 @@ export async function trackUserAnswers(
   console.log("user answers current session", data);
 }
 
-export async function finishSession() {}
+export async function finishSession(correctAnswers: number, sessionId: string) {
+  const { data } = await supabase
+    .from("sessions")
+    .update({ score: correctAnswers, completed_at: new Date().toISOString() })
+    .eq("id", sessionId)
+    .select();
+  console.log(data);
+}

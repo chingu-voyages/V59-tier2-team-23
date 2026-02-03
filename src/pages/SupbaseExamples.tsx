@@ -15,12 +15,14 @@ import {
 
 const buttonStyles =
   " cursor-pointer px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-semibold rounded-lg transition-all w-fit";
-
 const sectionStyles = "flex flex-col gap-4  p-4 rounded-lg shadow-lg m-4";
-const questionId = "68a4cad8-ac00-41b6-8200-ba1a13393a08";
-const sessionId = "04beb9ef-43ab-4d87-929c-53f232912358";
-const answerId = "";
+const selectedRoleId = "44b53191-0f2c-4260-949b-e7143995f991"; //scrumMasters
+const questionId = "9b08cd26-9201-408b-96ac-60240901fab6";
+const sessionId = "2fd7d608-b049-4891-b6d4-fff7f4e734e2";
+const answerId = "7e1ff0a6-b17a-4ff0-925c-386589fa189a";
 const isCorrect = false;
+const score = -100;
+const totalQuestions = 5;
 
 export default function SupabaseExamples() {
   return (
@@ -48,7 +50,7 @@ export default function SupabaseExamples() {
       </section>
       <h3>Some other queries</h3>
       <button
-        onClick={() => getRoleQuestions("12258174-d9a6-458c-8b61-2c2f469dfd1c")}
+        onClick={() => getRoleQuestions(selectedRoleId)}
         className={buttonStyles}
       >
         Get Questions selected role
@@ -61,7 +63,11 @@ export default function SupabaseExamples() {
         <button onClick={getUserInfo} className={buttonStyles}>
           get user info
         </button>
-        <button onClick={startSession} className={buttonStyles}>
+
+        <button
+          onClick={() => startSession(selectedRoleId, score, totalQuestions)}
+          className={buttonStyles}
+        >
           start session
         </button>
         <button
@@ -72,7 +78,10 @@ export default function SupabaseExamples() {
         >
           Track user answers
         </button>
-        <button onClick={finishSession} className={buttonStyles}>
+        <button
+          onClick={() => finishSession(0, sessionId)}
+          className={buttonStyles}
+        >
           finish session
         </button>
       </section>
