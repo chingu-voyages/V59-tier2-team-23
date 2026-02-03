@@ -17,7 +17,7 @@ export default function PageHeader({
   let navOptions: string[] = ["home"];
 
   if (!isAuthLoading && user) {
-    navOptions = ["home", "roles", "logout"];
+    navOptions = ["home", "roles", "logout", "supabaseexamples"];
   }
   if (!isAuthLoading && isGuestLogin) {
     navOptions = ["home", "roles"];
