@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { useDate } from "../hooks";
 import { format } from "../utils/date.ts";
 import { useAuth } from "../context/AuthContext.tsx";
@@ -8,18 +8,20 @@ type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLElement>;
 
-export default function PageHeader({
+export default function Header({
   className = "",
   ...props
 }: Props): JSX.Element {
   const { user, signOut, isAuthLoading, isGuestLogin } = useAuth();
   const { date } = useDate();
-  let navOptions: string[] = ["home"];
+  const { pathname } = useLocation();
+  const activeLink = pathname.slice(1);
 
+  let navOptions: string[] = ["home"];
   if (!isAuthLoading && user) {
     navOptions = ["home", "roles", "logout", "supabaseexamples"];
   }
-  if (!isAuthLoading && isGuestLogin) {
+  if (!isAuthLoading && isGuestLogin && pathname !== "/home") {
     navOptions = ["home", "roles"];
   }
 
@@ -37,13 +39,20 @@ export default function PageHeader({
           <ul className="flex justify-between gap-[1rem] overflow-x-auto overflow-y-hidden">
             {navOptions.map((nav) => (
               <li key={nav} className="capitalize">
-                {nav === "logout" ? (
-                  <NavLink to={"/"} onClick={signOut}>
+                {
+                  <NavLink
+                    to={`${nav === "logout" ? "/" : `/${nav}`}`}
+                    className={`${nav === activeLink || activeLink === "" ? "bg-[#525151]" : ""}  p-2  flex justify-center items-center hover:bg-[#5e5c5c]`}
+                    onClick={() => {
+                      if (nav === "logout") {
+                        signOut();
+                      }
+                      return;
+                    }}
+                  >
                     {nav}
                   </NavLink>
-                ) : (
-                  <NavLink to={`/${nav}`}>{nav}</NavLink>
-                )}
+                }
               </li>
             ))}
           </ul>
