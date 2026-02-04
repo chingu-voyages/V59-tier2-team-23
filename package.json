@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@google/genai": "^1.38.0",
     "@google/generative-ai": "^0.24.1",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
     "@supabase/supabase-js": "^2.91.1",
     "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.0",
