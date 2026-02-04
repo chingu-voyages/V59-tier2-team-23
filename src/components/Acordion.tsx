@@ -18,7 +18,7 @@ export default function Acordion() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <img src="/public/schema.png" />
+          <img src="/schema.png" />
         </AccordionDetails>
       </Accordion>
     </div>

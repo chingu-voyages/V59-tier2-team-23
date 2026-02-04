@@ -8,7 +8,7 @@ type Props = {
 
 export default function ResultStats({ stats, className = '', ...props }: Props): JSX.Element {
     return (
-        <div className={`flex w-full max-w-[8rem] justify-between leading-none ${className}`} {...props}>
+        <div className={`flex w-full max-w-32 justify-between leading-none ${className}`} {...props}>
             <div>
                 <h2 >Grade</h2>
                 <p className="text-[1.5rem] ">{getGrade(stats)}</p>
