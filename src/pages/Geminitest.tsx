@@ -4,7 +4,7 @@ import { geminiModel } from "../components/Geminifunction";
 import { handleGenerateMoreQuestions } from "../components/MoreQuestions";
 
 type Props = {
-  selectedRole: string;
+  // selectedRole?: string;
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
