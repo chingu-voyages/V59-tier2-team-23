@@ -5,7 +5,7 @@
 }
 
 @theme {
-    --color-result: #D9D9D9;
+    --breakpoint-xs: 23rem;
 }
 
 @layer base {

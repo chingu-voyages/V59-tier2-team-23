@@ -12,6 +12,7 @@ import { aggregate } from "../utils/results.ts";
 import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 const roles = questionsData as RoleQuestions[];
 
@@ -43,17 +44,24 @@ interface FeedbackProps {
 // interface ResultsProps {
 //   result: QuestionnaireResult;
 // }
+interface Props {
+  stepInit?: AppStep;
+  selectedRoleInit?: RoleQuestions;
+  userAnswersInit?: UserAnswer[];
+  lastResultInit?: QuestionnaireResult
 
-export default function Questionnaire() {
-  const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
-  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
+}
+export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersInit, lastResultInit }: Props) {
+  const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION");//
+  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(selectedRoleInit || null);//
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(userAnswersInit || []);//
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(lastResultInit || null);//
+
   function RoleSelector({
     roles,
     selectedRole,
@@ -180,8 +188,11 @@ export default function Questionnaire() {
         </div>
         <div className='mb-[0.5rem] sm:mb-[1.5rem] '>If you would like to review any of the questions, you can select them from the list below.</div>
         <ResultsGrid onReview={onReview} className='mb-[2.5rem]' result={result} />
-        <Link to={'/home'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>Back To Home</Link>
-      </div>
+        <div className=" flex flex-col w-full items-center xs:justify-center gap-[0.3rem] xs:flex-row xs:gap-[0.5rem]">
+          <Link to={'/home'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>Back To Home</Link>
+          <Link to={'/history'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>View History</Link>
+        </div>
+      </div >
     );
 
   }
@@ -367,8 +378,9 @@ export default function Questionnaire() {
       setLastResult({
         submitted: true,
         submittedAt: new Date().toISOString(),
-        roleId: roles.indexOf(selectedRole) + 1,
+        roleId: roles.indexOf(selectedRole),
         userAnswers,
+        id: uuidv4()
       });
     return <Results onRetry={(): void => {
       setCurrentIndex(0);

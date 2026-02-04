@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { NavLink, useLocation } from "react-router";
 import { useDate } from "../hooks";
-import { format } from "../utils/date.ts";
+import { formatDate } from "../utils/date.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 
 type Props = {
@@ -19,7 +19,7 @@ export default function Header({
 
   let navOptions: string[] = ["home"];
   if (!isAuthLoading && user) {
-    navOptions = ["home", "roles", "logout"];
+    navOptions = ["home", "roles", "history", "logout", "supabaseexamples"];
   }
   if (!isAuthLoading && isGuestLogin && pathname !== "/home") {
     navOptions = ["home", "roles"];
@@ -31,7 +31,7 @@ export default function Header({
         className={`w-full px-[1rem] py-[0.75rem] sm:px-[1.5rem] bg-[var(--color-surface)] text-white text-nowrap leading-none flex flex-col gap-[1rem] justify-between  ${className}`}
         {...props}
       >
-        <p className="text-end">{format(date)}</p>
+        <p className="text-end">{formatDate(date)}</p>
         <nav className="flex justify-between items-end gap-[0.5rem]">
           <NavLink to="/" className="font-bold text-[1.5rem]">
             Quizest

@@ -26,5 +26,6 @@ export interface QuestionnaireResult {
   submitted: boolean;
   submittedAt: string;
   roleId: number;
+  id: string;
   userAnswers: UserAnswer[];
 }
