@@ -67,8 +67,11 @@ export async function startSession(
         score: score,
         total_questions: totalQuestions,
       })
-      .select();
-    console.log("Current sesion data", data);
+      .select()
+      .single();
+
+    console.log("Current session data", data);
+    return data;
   }
 }
 
@@ -97,4 +100,37 @@ export async function finishSession(correctAnswers: number, sessionId: string) {
     .eq("id", sessionId)
     .select();
   console.log(data);
+}
+
+export async function getAllSessionsForRole(roleId: string) {
+  //for leader board and calculate percentage
+  const { data } = await supabase
+    .from("sessions")
+    .select("user_id, score, total_questions, completed_at")
+    .eq("role_id", roleId)
+    .not("completed_at", "is", null);
+  console.log("get all session for role", data);
+
+  return data;
+}
+
+export async function getAllSessionsUser(userId: string) {
+  const { data } = await supabase
+    .from("sessions")
+    .select("*, roles(name)")
+    .eq("user_id", userId);
+
+  console.log("user sessions", data);
+  return data;
+}
+
+export async function sessionDetails(sessionId: string) {
+  const { data } = await supabase
+    .from("user_answers")
+    .select("*, questions(question, explanation), answers(answer)")
+    .eq("session_id", sessionId);
+
+  console.log(data);
+
+  return data;
 }
