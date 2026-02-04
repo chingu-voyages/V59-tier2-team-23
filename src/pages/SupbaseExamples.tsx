@@ -23,6 +23,7 @@ const answerId = "7e1ff0a6-b17a-4ff0-925c-386589fa189a";
 const isCorrect = false;
 const score = -100;
 const totalQuestions = 5;
+const userId = "add user id";
 
 export default function SupabaseExamples() {
   return (
@@ -50,7 +51,7 @@ export default function SupabaseExamples() {
       </section>
       <h3>Some other queries</h3>
       <button
-        onClick={() => getRoleQuestions(selectedRoleId)}
+        onClick={() => getRoleQuestions(selectedRoleId, userId)}
         className={buttonStyles}
       >
         Get Questions selected role
