@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { Layout, Home, Fallback } from "./pages";
 import Questionnaire from "./components/Questionnaire";
 import Geminitest from "./pages/Geminitest";
+import SupabaseExamples from "./pages/SupbaseExamples";
 import { RedirectGuest } from "./components";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="home" element={<Home />} />
           <Route element={<RedirectGuest />}>
             <Route path="geminitest" element={<Geminitest />} />
+            <Route path="supabaseexamples" element={<SupabaseExamples />} />
             <Route path="roles" element={<Questionnaire />} />
             {/* wanted to make the path 'quiz' but we need to set the path in supabase first */}
             <Route path="*" element={<Fallback />} />
