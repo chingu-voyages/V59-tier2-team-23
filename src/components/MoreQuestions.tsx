@@ -1,36 +1,12 @@
-import type { JSX } from "react";
-import { useState, useRef, useEffect } from "react";
+// import type { JSX } from "react";
+// import { useState, useRef, useEffect } from "react";
 import { geminiModel } from "../components/Geminifunction";
 import existingQuestions from "../data/questions.json";
 
-type Props = {
-  selectedRole: string;
-  className?: string;
-} & React.HTMLAttributes<HTMLDivElement>;
-
-// export default function MoreQuestions({
-//   selectedRole,
-// }: // className = "",
-// // ...props
-// Props): JSX.Element {
-//   const [input, setInput] = useState("");
-//   const [output, setOutput] = useState("");
-//   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-//   useEffect(() => {
-//     const el = textareaRef.current;
-//     if (!el) return;
-
-//     el.style.height = "auto"; // Reset height to auto to recalculate
-//     const maxHeight = window.innerHeight * 0.5; // 50% of viewport height
-//     el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
-//   }, [input]);
-
-//   async function handleSend() {
-//     const result = await geminiModel.generateContent(input);
-//     const text = result.response.text();
-//     setOutput(text);
-//   }
+// type Props = {
+//   selectedRole: string;
+//   className?: string;
+// } & React.HTMLAttributes<HTMLDivElement>;
 
 export async function handleGenerateMoreQuestions(selectedRole: string) {
   const prompt = `
@@ -54,7 +30,10 @@ Constraints:
 * [ ] Questions should be multiple choice questions.
 * [ ] Questions should be tailored for someone with a 10th grade high school education
 * [ ] Questions should reflect those that would be asked in a real interview.
-* [ ] If the role is Scrum Master, the questions should also be helpful for passing the CSM certification tests
+* [ ] If the role is Scrum Master, the questions should also be helpful for passing the CSM certification test
+* [ ] If the role is Scrum Product Owner, the questions should also be helpful for passing the CSPO certification test
+* [ ] If the role is Web Developer or Python Developer, some of the generated questions should be about data structures and algorithms
+* [ ] If the role is UI/UX Designer, the questions should not include questions that are specific to HTML, CSS, or programming languages. They should stress UI/UX concepts and practices, like general UI design, responsiveness, and accessibility.
 * [ ] Generate exactly 20 new questions - no more, no less.
 
 Format:
@@ -65,45 +44,4 @@ Format:
 
   const result = await geminiModel.generateContent(prompt);
   return result.response.text();
-//   return text;
 }
-
-//   return (
-//     <div className="p-4 space-y-4">
-//       <textarea
-//         ref={textareaRef}
-//         className="border p-2 w-full resize-none"
-//         value={input}
-//         onChange={(e) => setInput(e.target.value)}
-//         placeholder="Ask Gemini something..."
-//         style={{
-//           maxHeight: "40vh",
-//           overflowY: "auto",
-//         }}
-//       />
-
-{
-  /* <button
-        onClick={handleSend}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Send
-      </button> */
-}
-{
-  /* 
-      <button
-        onClick={() =>
-          void handleGenerateMoreScrumMasterQuestions("Scrum Master")
-        }
-        className="bg-red-600 text-white mx-2 px-4 py-2 rounded"
-      >
-        Get More Scrum Master Questions
-      </button>
-      <div className="border p-2 bg-gray-50 whitespace-pre-wrap py-2">
-        {output}
-      </div>
-    </div> */
-}
-//   );
-// }
