@@ -1,5 +1,5 @@
 import questionsData from "../data/questions.json";
-import { useState, type JSX } from "react";
+import { use, useState, type JSX } from "react";
 import type {
   RoleQuestions,
   Flashcard,
@@ -12,8 +12,10 @@ import { aggregate } from "../utils/results.ts";
 import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
+import { getRoles } from "../utils/getData.ts";
 
 const roles = questionsData as RoleQuestions[];
+const rolesPromise = getRoles();
 
 interface RoleSelectorProps {
   roles: RoleQuestions[];
@@ -53,7 +55,12 @@ export default function Questionnaire() {
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
+    null,
+  );
+
+  console.log(use(rolesPromise));
+
   function RoleSelector({
     roles,
     selectedRole,
@@ -75,10 +82,11 @@ export default function Questionnaire() {
                   onClick={() => onSelect(role)}
                   className={`
                 w-full rounded-xl border p-4 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-200 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-200 hover:bg-blue-50"
+                }
               `}
                 >
                   <h3 className="font-semibold">{role.role}</h3>
@@ -133,10 +141,11 @@ export default function Questionnaire() {
                   onClick={() => onSelect(key as OptionKey)}
                   className={`
                 w-full rounded-lg border p-3 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-300 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-300 hover:bg-blue-50"
+                }
               `}
                 >
                   <span className="font-semibold mr-2">{key}.</span>
@@ -163,27 +172,54 @@ export default function Questionnaire() {
   }
 
   type ResultProps = {
-    className?: string,
-    result: QuestionnaireResult,
-    onReview: (answer: UserAnswer, index: number) => void
-    onRetry: () => void
-  } & React.HTMLAttributes<HTMLDivElement>
+    className?: string;
+    result: QuestionnaireResult;
+    onReview: (answer: UserAnswer, index: number) => void;
+    onRetry: () => void;
+  } & React.HTMLAttributes<HTMLDivElement>;
 
-  function Results({ className = '', result, onRetry, onReview, ...props }: ResultProps): JSX.Element {
+  function Results({
+    className = "",
+    result,
+    onRetry,
+    onReview,
+    ...props
+  }: ResultProps): JSX.Element {
     const stats = aggregate(result!.userAnswers);
     return (
-      <div className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`} {...props}>
-        <h1 className='text-[1.5rem] text-center  mb-[1rem]'>{selectedRole?.role} prep results</h1>
-        <div className='flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]'>
+      <div
+        className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`}
+        {...props}
+      >
+        <h1 className="text-[1.5rem] text-center  mb-[1rem]">
+          {selectedRole?.role} prep results
+        </h1>
+        <div className="flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]">
           <ResultStats stats={stats} />
-          <button onClick={onRetry} className='h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white'>Retry</button>
+          <button
+            onClick={onRetry}
+            className="h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white"
+          >
+            Retry
+          </button>
         </div>
-        <div className='mb-[0.5rem] sm:mb-[1.5rem] '>If you would like to review any of the questions, you can select them from the list below.</div>
-        <ResultsGrid onReview={onReview} className='mb-[2.5rem]' result={result} />
-        <Link to={'/home'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>Back To Home</Link>
+        <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
+          If you would like to review any of the questions, you can select them
+          from the list below.
+        </div>
+        <ResultsGrid
+          onReview={onReview}
+          className="mb-[2.5rem]"
+          result={result}
+        />
+        <Link
+          to={"/home"}
+          className="mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]"
+        >
+          Back To Home
+        </Link>
       </div>
     );
-
   }
 
   function Feedback({
@@ -235,19 +271,24 @@ export default function Questionnaire() {
           </p>
           <div className="flex flex-col gap-[0.5rem]">
             <div className="flex gap-[0.5rem]">
-              {submitted && <button
-                disabled={currentIndex == 0}
-                onClick={onPrev}
-                className="
+              {submitted && (
+                <button
+                  disabled={currentIndex == 0}
+                  onClick={onPrev}
+                  className="
               w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
             hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition
             "
-              >
-                Previous
-              </button>}
+                >
+                  Previous
+                </button>
+              )}
               <button
                 onClick={onNext}
-                disabled={submitted && currentIndex + 1 == selectedRole?.flashcards.length}
+                disabled={
+                  submitted &&
+                  currentIndex + 1 == selectedRole?.flashcards.length
+                }
                 className="
               w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
               hover:bg-blue-700 transition
@@ -255,27 +296,31 @@ export default function Questionnaire() {
 
               "
               >
-                {!submitted && currentIndex + 1 < selectedRole?.flashcards.length! && "Next Question"}
-                {!submitted && currentIndex + 1 == selectedRole?.flashcards.length! && "Show Results"}
+                {!submitted &&
+                  currentIndex + 1 < selectedRole?.flashcards.length! &&
+                  "Next Question"}
+                {!submitted &&
+                  currentIndex + 1 == selectedRole?.flashcards.length! &&
+                  "Show Results"}
                 {submitted && "Next"}
               </button>
             </div>
-            {submitted && <button
-              onClick={() => setStep('RESULTS')}
-              className="
+            {submitted && (
+              <button
+                onClick={() => setStep("RESULTS")}
+                className="
             w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
             hover:bg-blue-700 transition
             "
-            >
-              Back to Results
-            </button>}
+              >
+                Back to Results
+              </button>
+            )}
           </div>
         </div>
       </div>
     );
   }
-
-
 
   if (step === "ROLE_SELECTION") {
     return (
@@ -344,7 +389,7 @@ export default function Questionnaire() {
           } else if (nextIndex < selectedRole.flashcards.length && submitted) {
             setCurrentIndex(nextIndex);
             setLastUserAnswer(userAnswers[nextIndex]);
-            setLastQuestion(selectedRole.flashcards[nextIndex])
+            setLastQuestion(selectedRole.flashcards[nextIndex]);
           } else {
             setStep("RESULTS");
           }
@@ -354,7 +399,7 @@ export default function Questionnaire() {
           if (prevIndex >= 0) {
             setCurrentIndex(prevIndex);
             setLastUserAnswer(userAnswers[prevIndex]);
-            setLastQuestion(selectedRole.flashcards[prevIndex])
+            setLastQuestion(selectedRole.flashcards[prevIndex]);
           }
         }}
       />
@@ -370,22 +415,28 @@ export default function Questionnaire() {
         roleId: roles.indexOf(selectedRole) + 1,
         userAnswers,
       });
-    return <Results onRetry={(): void => {
-      setCurrentIndex(0);
-      setUserAnswers([]);
-      setSelectedOption(null);
-      setLastQuestion(null);
-      setLastUserAnswer(null);
-      setSubmitted(false);
-      setLastResult(null);
-      setStep("QUESTION");
-    }} onReview={(answer: UserAnswer, index: number) => {
-      const question = selectedRole.flashcards[index];
-      setLastQuestion(question);
-      setLastUserAnswer(answer);
-      setCurrentIndex(index);
-      setStep("FEEDBACK");
-    }} result={lastResult!} />;
+    return (
+      <Results
+        onRetry={(): void => {
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          setSelectedOption(null);
+          setLastQuestion(null);
+          setLastUserAnswer(null);
+          setSubmitted(false);
+          setLastResult(null);
+          setStep("QUESTION");
+        }}
+        onReview={(answer: UserAnswer, index: number) => {
+          const question = selectedRole.flashcards[index];
+          setLastQuestion(question);
+          setLastUserAnswer(answer);
+          setCurrentIndex(index);
+          setStep("FEEDBACK");
+        }}
+        result={lastResult!}
+      />
+    );
   }
 
   return null;
