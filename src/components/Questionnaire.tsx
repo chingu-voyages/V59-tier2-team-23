@@ -1,5 +1,4 @@
-import questionsData from "../data/questions.json";
-import { use, useState, type JSX } from "react";
+import { useState, type JSX, useEffect } from "react";
 import type {
   RoleQuestions,
   Flashcard,
@@ -12,10 +11,14 @@ import { aggregate } from "../utils/results.ts";
 import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
-import { getRoles } from "../utils/getData.ts";
-
-const roles = questionsData as RoleQuestions[];
-const rolesPromise = getRoles();
+import {
+  finishSession,
+  getRolesWithQuestions,
+  startSession,
+  trackUserAnswers,
+} from "../utils/getData.ts";
+import { useAuth } from "../context/AuthContext.tsx";
+import Skeleton from "@mui/material/Skeleton";
 
 interface RoleSelectorProps {
   roles: RoleQuestions[];
@@ -42,10 +45,6 @@ interface FeedbackProps {
   total: number;
 }
 
-// interface ResultsProps {
-//   result: QuestionnaireResult;
-// }
-
 export default function Questionnaire() {
   const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
   const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
@@ -58,8 +57,33 @@ export default function Questionnaire() {
   const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
     null,
   );
+  const { user, isGuestLogin } = useAuth();
+  const [roles, setRoles] = useState<RoleQuestions[]>([]);
+  const [loading, setIsLoading] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  console.log(roles);
 
-  console.log(use(rolesPromise));
+  useEffect(() => {
+    async function loadRoles() {
+      setIsLoading(true);
+      const data = await getRolesWithQuestions(user?.id, isGuestLogin);
+      if (data) setIsLoading(false);
+      setRoles(data);
+    }
+
+    loadRoles();
+  }, [user, isGuestLogin]);
+
+  if (loading)
+    return (
+      <div className="w-screen h-screen flex items-center justify-center ">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
+          <Skeleton variant="rectangular" width={410} height={100} />
+          <Skeleton variant="rectangular" width={410} height={100} />
+          <Skeleton variant="rectangular" width={410} height={100} />
+        </div>{" "}
+      </div>
+    );
 
   function RoleSelector({
     roles,
@@ -328,8 +352,17 @@ export default function Questionnaire() {
         roles={roles}
         selectedRole={selectedRole}
         onSelect={setSelectedRole}
-        onBegin={() => {
+        onBegin={async () => {
           if (!selectedRole) return;
+          const session = await startSession(
+            selectedRole.id,
+            0,
+            selectedRole.flashcards.length,
+          );
+
+          if (session) {
+            setSessionId(session.id);
+          }
           setCurrentIndex(0);
           setUserAnswers([]);
           setStep("QUESTION");
@@ -352,10 +385,17 @@ export default function Questionnaire() {
         current={currentIndex + 1}
         total={totalQuestions}
         onSelect={setSelectedOption}
-        onSubmit={() => {
-          if (!selectedOption) return;
+        onSubmit={async () => {
+          if (!selectedOption || !sessionId) return;
 
           const correct = selectedOption === currentQuestion.answer;
+          await trackUserAnswers(
+            currentQuestion.id as string,
+            sessionId,
+            currentQuestion.answerIds[selectedOption],
+            selectedOption,
+            correct,
+          );
 
           const answerRecord: UserAnswer = {
             Qid: currentQuestion.id,
@@ -407,7 +447,13 @@ export default function Questionnaire() {
   }
 
   if (step === "RESULTS") {
-    if (!submitted) setSubmitted(true);
+    if (!submitted) {
+      setSubmitted(true);
+      const correctCount = userAnswers.filter(
+        (answer) => answer.correct,
+      ).length;
+      finishSession(correctCount, sessionId!);
+    }
     if (!lastResult)
       setLastResult({
         submitted: true,
