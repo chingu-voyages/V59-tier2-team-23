@@ -1,5 +1,4 @@
 import LeaderboardStatCard from "../components/LB_Stat_Card"
-import fakeLeaderboardStats from "../data/tempData_Leaderboard.json"
 
 export default function Leaderboard() {
   //// TEMP FAKE DATA

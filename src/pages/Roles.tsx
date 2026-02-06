@@ -7,6 +7,7 @@ type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
+//We are not using this page anymore? can we deleted it?
 const roles = [
   {
     id: "scrum-master",

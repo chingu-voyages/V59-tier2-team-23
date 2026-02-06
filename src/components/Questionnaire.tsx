@@ -183,12 +183,6 @@ export default function Questionnaire() {
           If you would like to review any of the questions, you can select them from the list below.
         </div>
         <ResultsGrid onReview={onReview} className='mb-[2.5rem]' result={result} />
-        {/* 
-        EMILY NOTE - This is where I would put user comparison stats display. I would probably 
-        add the sourcing of the stats to the folder where Matt set up his results data and then import it likewise
-        
-        As far as display goes, add a title such as "How You Compare To Other Users" and then a little blurb for each stat, and optionally some kind of visual display (like happy emohi, sad emoji, or research for inspo
-        */}
         <Link
           to={"/home"}
           className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>
