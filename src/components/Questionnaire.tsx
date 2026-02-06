@@ -1,24 +1,39 @@
 import questionsData from "../data/questions.json";
+import essayQuestionsData from "../data/essayquestions.json";
 import { useState, type JSX } from "react";
 import type {
   RoleQuestions,
   Flashcard,
+  Essaycard,
   UserAnswer,
   OptionKey,
   QuestionnaireResult,
   AppStep,
+  FreeResponseAnswer,
+  QuestionTypeOption,
 } from "../types/questions.ts";
 import { aggregate } from "../utils/results.ts";
 import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
+import EssayCard from "./EssayCard.tsx";
+import FreeResponseResults from "./FreeResponseResults.tsx";
 
 const roles = questionsData as RoleQuestions[];
+
+const essayQuestions = essayQuestionsData;
 
 interface RoleSelectorProps {
   roles: RoleQuestions[];
   selectedRole: RoleQuestions | null;
   onSelect: (role: RoleQuestions) => void;
+  onBegin: () => void;
+}
+
+interface QuestionSelectorProps {
+  types: QuestionTypeOption[];
+  selectedType: QuestionTypeOption | null;
+  onSelect: (type: QuestionTypeOption) => void;
   onBegin: () => void;
 }
 
@@ -40,20 +55,46 @@ interface FeedbackProps {
   total: number;
 }
 
-// interface ResultsProps {
-//   result: QuestionnaireResult;
-// }
-
 export default function Questionnaire() {
   const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
   const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
+  const [selectedType, setSelectedType] = useState<QuestionTypeOption | null>(
+    null,
+  );
+  const [freeResponses, setFreeResponses] = useState<FreeResponseAnswer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
+    null,
+  );
+
+  const QUESTION_TYPES: QuestionTypeOption[] = [
+    {
+      type: "FREE_RESPONSE",
+      title: "Free Response",
+      description: "Write detailed answers in your own words.",
+    },
+    {
+      type: "MULTIPLE_CHOICE",
+      title: "Multiple Choice",
+      description: "Select from predefined answers.",
+    },
+    {
+      type: "BOTH",
+      title: "Both",
+      description:
+        "Answer using multiple choice and expand with free response.",
+    },
+  ];
+
+  const roleQuestions: Essaycard[] = selectedRole
+    ? essayQuestions.filter((q) => q.role === selectedRole.role)
+    : [];
+
   function RoleSelector({
     roles,
     selectedRole,
@@ -75,10 +116,11 @@ export default function Questionnaire() {
                   onClick={() => onSelect(role)}
                   className={`
                 w-full rounded-xl border p-4 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-200 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-200 hover:bg-blue-50"
+                }
               `}
                 >
                   <h3 className="font-semibold">{role.role}</h3>
@@ -96,6 +138,59 @@ export default function Questionnaire() {
           disabled:opacity-50 disabled:cursor-not-allowed
           hover:bg-blue-700 transition
         "
+          >
+            Begin Questionnaire
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  function QuestionSelector({
+    types,
+    selectedType,
+    onSelect,
+    onBegin,
+  }: QuestionSelectorProps) {
+    return (
+      <div className="sm:min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
+          <h2 className="text-2xl font-bold text-center">
+            Select Question Format
+          </h2>
+
+          <div className="space-y-3">
+            {types.map((t) => {
+              const isSelected = selectedType?.type === t.type;
+
+              return (
+                <button
+                  key={t.type}
+                  onClick={() => onSelect(t)}
+                  className={`
+                  w-full rounded-xl border p-4 text-left transition
+                  ${
+                    isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-200 hover:bg-blue-50"
+                  }
+                `}
+                >
+                  <h3 className="font-semibold">{t.title}</h3>
+                  <p className="text-sm text-gray-600">{t.description}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={onBegin}
+            disabled={!selectedType}
+            className="
+            w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
+            disabled:opacity-50 disabled:cursor-not-allowed
+            hover:bg-blue-700 transition
+          "
           >
             Begin Questionnaire
           </button>
@@ -133,10 +228,11 @@ export default function Questionnaire() {
                   onClick={() => onSelect(key as OptionKey)}
                   className={`
                 w-full rounded-lg border p-3 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-300 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-300 hover:bg-blue-50"
+                }
               `}
                 >
                   <span className="font-semibold mr-2">{key}.</span>
@@ -163,27 +259,54 @@ export default function Questionnaire() {
   }
 
   type ResultProps = {
-    className?: string,
-    result: QuestionnaireResult,
-    onReview: (answer: UserAnswer, index: number) => void
-    onRetry: () => void
-  } & React.HTMLAttributes<HTMLDivElement>
+    className?: string;
+    result: QuestionnaireResult;
+    onReview: (answer: UserAnswer, index: number) => void;
+    onRetry: () => void;
+  } & React.HTMLAttributes<HTMLDivElement>;
 
-  function Results({ className = '', result, onRetry, onReview, ...props }: ResultProps): JSX.Element {
+  function Results({
+    className = "",
+    result,
+    onRetry,
+    onReview,
+    ...props
+  }: ResultProps): JSX.Element {
     const stats = aggregate(result!.userAnswers);
     return (
-      <div className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`} {...props}>
-        <h1 className='text-[1.5rem] text-center  mb-[1rem]'>{selectedRole?.role} prep results</h1>
-        <div className='flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]'>
+      <div
+        className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`}
+        {...props}
+      >
+        <h1 className="text-[1.5rem] text-center  mb-[1rem]">
+          {selectedRole?.role} prep results
+        </h1>
+        <div className="flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]">
           <ResultStats stats={stats} />
-          <button onClick={onRetry} className='h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white'>Retry</button>
+          <button
+            onClick={onRetry}
+            className="h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white"
+          >
+            Retry
+          </button>
         </div>
-        <div className='mb-[0.5rem] sm:mb-[1.5rem] '>If you would like to review any of the questions, you can select them from the list below.</div>
-        <ResultsGrid onReview={onReview} className='mb-[2.5rem]' result={result} />
-        <Link to={'/home'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>Back To Home</Link>
+        <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
+          If you would like to review any of the questions, you can select them
+          from the list below.
+        </div>
+        <ResultsGrid
+          onReview={onReview}
+          className="mb-[2.5rem]"
+          result={result}
+        />
+        <Link
+          to={"/home"}
+          className="mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]"
+        >
+          Back To Home
+        </Link>
       </div>
     );
-
   }
 
   function Feedback({
@@ -235,19 +358,24 @@ export default function Questionnaire() {
           </p>
           <div className="flex flex-col gap-[0.5rem]">
             <div className="flex gap-[0.5rem]">
-              {submitted && <button
-                disabled={currentIndex == 0}
-                onClick={onPrev}
-                className="
+              {submitted && (
+                <button
+                  disabled={currentIndex == 0}
+                  onClick={onPrev}
+                  className="
               w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
             hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition
             "
-              >
-                Previous
-              </button>}
+                >
+                  Previous
+                </button>
+              )}
               <button
                 onClick={onNext}
-                disabled={submitted && currentIndex + 1 == selectedRole?.flashcards.length}
+                disabled={
+                  submitted &&
+                  currentIndex + 1 == selectedRole?.flashcards.length
+                }
                 className="
               w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
               hover:bg-blue-700 transition
@@ -255,27 +383,31 @@ export default function Questionnaire() {
 
               "
               >
-                {!submitted && currentIndex + 1 < selectedRole?.flashcards.length! && "Next Question"}
-                {!submitted && currentIndex + 1 == selectedRole?.flashcards.length! && "Show Results"}
+                {!submitted &&
+                  currentIndex + 1 < selectedRole?.flashcards.length! &&
+                  "Next Question"}
+                {!submitted &&
+                  currentIndex + 1 == selectedRole?.flashcards.length! &&
+                  "Show Results"}
                 {submitted && "Next"}
               </button>
             </div>
-            {submitted && <button
-              onClick={() => setStep('RESULTS')}
-              className="
+            {submitted && (
+              <button
+                onClick={() => setStep("RESULTS")}
+                className="
             w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
             hover:bg-blue-700 transition
             "
-            >
-              Back to Results
-            </button>}
+              >
+                Back to Results
+              </button>
+            )}
           </div>
         </div>
       </div>
     );
   }
-
-
 
   if (step === "ROLE_SELECTION") {
     return (
@@ -287,7 +419,31 @@ export default function Questionnaire() {
           if (!selectedRole) return;
           setCurrentIndex(0);
           setUserAnswers([]);
-          setStep("QUESTION");
+          setStep("QUESTION_SELECTION");
+        }}
+      />
+    );
+  }
+
+  if (step === "QUESTION_SELECTION") {
+    return (
+      <QuestionSelector
+        types={QUESTION_TYPES}
+        selectedType={selectedType}
+        onSelect={setSelectedType}
+        onBegin={() => {
+          if (!selectedType) return;
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          if (selectedType.type === "FREE_RESPONSE") {
+            setStep("FR_QUESTION");
+          }
+          if (selectedType.type === "MULTIPLE_CHOICE") {
+            setStep("MC_QUESTION");
+          }
+          if (selectedType.type === "BOTH") {
+            setStep("BOTH_QUESTION");
+          }
         }}
       />
     );
@@ -299,7 +455,7 @@ export default function Questionnaire() {
 
   const currentQuestion = selectedRole.flashcards[currentIndex];
 
-  if (step === "QUESTION") {
+  if (step === "MC_QUESTION") {
     return (
       <QuestionCard
         question={currentQuestion}
@@ -329,6 +485,30 @@ export default function Questionnaire() {
     );
   }
 
+  if (step === "FR_QUESTION") {
+    return (
+      <EssayCard
+        questions={roleQuestions}
+        onSubmitAll={(answers) => {
+          setFreeResponses(answers);
+          setStep("FR_RESULTS");
+        }}
+      />
+    );
+  }
+
+  if (step === "BOTH_QUESTION") {
+    return (
+      <EssayCard
+        questions={roleQuestions}
+        onSubmitAll={(answers) => {
+          setFreeResponses(answers);
+          setStep("MC_QUESTION");
+        }}
+      />
+    );
+  }
+
   if (step === "FEEDBACK" && lastQuestion && lastUserAnswer) {
     return (
       <Feedback
@@ -340,11 +520,11 @@ export default function Questionnaire() {
           const nextIndex = currentIndex + 1;
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
-            setStep("QUESTION");
+            setStep("MC_QUESTION");
           } else if (nextIndex < selectedRole.flashcards.length && submitted) {
             setCurrentIndex(nextIndex);
             setLastUserAnswer(userAnswers[nextIndex]);
-            setLastQuestion(selectedRole.flashcards[nextIndex])
+            setLastQuestion(selectedRole.flashcards[nextIndex]);
           } else {
             setStep("RESULTS");
           }
@@ -354,7 +534,24 @@ export default function Questionnaire() {
           if (prevIndex >= 0) {
             setCurrentIndex(prevIndex);
             setLastUserAnswer(userAnswers[prevIndex]);
-            setLastQuestion(selectedRole.flashcards[prevIndex])
+            setLastQuestion(selectedRole.flashcards[prevIndex]);
+          }
+        }}
+      />
+    );
+  }
+
+  if (step === "FR_RESULTS") {
+    return (
+      <FreeResponseResults
+        responses={freeResponses}
+        onBack={() => {
+          // Decide where to go next
+          if (selectedType?.type === "BOTH") {
+            setCurrentIndex(0);
+            setStep("MC_QUESTION");
+          } else {
+            setStep("ROLE_SELECTION");
           }
         }}
       />
@@ -370,22 +567,28 @@ export default function Questionnaire() {
         roleId: roles.indexOf(selectedRole) + 1,
         userAnswers,
       });
-    return <Results onRetry={(): void => {
-      setCurrentIndex(0);
-      setUserAnswers([]);
-      setSelectedOption(null);
-      setLastQuestion(null);
-      setLastUserAnswer(null);
-      setSubmitted(false);
-      setLastResult(null);
-      setStep("QUESTION");
-    }} onReview={(answer: UserAnswer, index: number) => {
-      const question = selectedRole.flashcards[index];
-      setLastQuestion(question);
-      setLastUserAnswer(answer);
-      setCurrentIndex(index);
-      setStep("FEEDBACK");
-    }} result={lastResult!} />;
+    return (
+      <Results
+        onRetry={(): void => {
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          setSelectedOption(null);
+          setLastQuestion(null);
+          setLastUserAnswer(null);
+          setSubmitted(false);
+          setLastResult(null);
+          setStep("MC_QUESTION");
+        }}
+        onReview={(answer: UserAnswer, index: number) => {
+          const question = selectedRole.flashcards[index];
+          setLastQuestion(question);
+          setLastUserAnswer(answer);
+          setCurrentIndex(index);
+          setStep("FEEDBACK");
+        }}
+        result={lastResult!}
+      />
+    );
   }
 
   return null;
