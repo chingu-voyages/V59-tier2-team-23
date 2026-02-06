@@ -1,9 +1,9 @@
-import { supabase } from "./supabase";
+import { supabase } from "./supabase"
 //get all roles
 export async function getRoles() {
-  const { data } = await supabase.from("roles").select("*");
-  console.log("roles data", data);
-  return data;
+  const { data } = await supabase.from("roles").select("*")
+  console.log("roles data", data)
+  return data
 }
 
 //get role questions login users
@@ -12,9 +12,9 @@ export async function getRoleQuestions(selectedRoleId: string, userId: string) {
     .from("questions")
     .select("*, answers(*)")
     .eq("role_id", selectedRoleId)
-    .or(`user_id.is.null,user_id.eq.${userId}`);
-  console.log("selected role login user questions", data);
-  return data;
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+  console.log("selected role login user questions", data)
+  return data
 }
 
 //get role questions guest users
@@ -23,25 +23,21 @@ export async function getRoleQuestionsGuest(selectedRoleId: string) {
     .from("questions")
     .select("*, answers(*)")
     .eq("role_id", selectedRoleId)
-    .is("user_id", null);
-  console.log("selected role questions guest", data);
-  return data;
+    .is("user_id", null)
+  console.log("selected role questions guest", data)
+  return data
 }
 
 //start session and get session id
-export async function startSession(
-  roleId: string,
-  score: number,
-  totalQuestions: number,
-) {
+export async function startSession(roleId: string, score: number, totalQuestions: number) {
   //you need to be login so you can get the user
   const {
     data: { user },
-  } = await supabase.auth.getUser();
-  console.log("Authenticated user info", user);
-  console.log(user?.user_metadata.name);
+  } = await supabase.auth.getUser()
+  console.log("Authenticated user info", user)
+  console.log(user?.user_metadata.name)
   if (user) {
-    const fName = user?.user_metadata.name.split(" ")[0] || "user";
+    const fName = user?.user_metadata.name.split(" ")[0] || "user"
     const { data } = await supabase
       .from("sessions")
       .insert({
@@ -52,10 +48,10 @@ export async function startSession(
         total_questions: totalQuestions,
       })
       .select()
-      .single();
+      .single()
 
-    console.log("Current session data", data);
-    return data;
+    console.log("Current session data", data)
+    return data
   }
 }
 
@@ -76,8 +72,8 @@ export async function trackUserAnswers(
       selected_option: selectedOption,
       is_correct: isCorrect,
     })
-    .select();
-  console.log("user answers current session", data);
+    .select()
+  console.log("user answers current session", data)
 }
 
 //finish session
@@ -87,40 +83,40 @@ export async function finishSession(correctAnswers: number, sessionId: string) {
     .update({ score: correctAnswers, completed_at: new Date().toISOString() })
     .eq("id", sessionId)
     .select()
-    .single();
-  console.log(data);
+    .single()
+  console.log(data)
 }
 
 //gets users stats for leader dashboard get sessions for all users////
 export async function getAllSessionsForRole(roleId: string) {
-  console.log(roleId);
+  console.log(roleId)
   const { data } = await supabase
     .from("sessions")
     .select("user_id, score, total_questions, completed_at, user_name")
     .eq("role_id", roleId)
-    .not("completed_at", "is", null);
-  console.log("get all session for role", data);
+    .not("completed_at", "is", null)
+  console.log("get all session for role", data)
 
-  return data;
+  return data
 }
 
 //get one user session history
 export async function getAllSessionsUser(userId: string) {
-  console.log(userId);
+  console.log(userId)
   const { data, error } = await supabase
     .from("sessions")
     .select("*, roles(name)")
     .eq("user_id", userId)
-    .order("started_at", { ascending: false });
-  console.log(error);
-  console.log("user sessions", data);
-  return data;
+    .order("started_at", { ascending: false })
+  console.log(error)
+  console.log("user sessions", data)
+  return data
 }
 
 export async function getSessions() {
-  const { data } = await supabase.from("sessions").select("*");
-  console.log("sessions", data);
-  return data;
+  const { data } = await supabase.from("sessions").select("*")
+  console.log("sessions", data)
+  return data
 }
 //get cuurent active session
 export async function getCurrentActiveSession(userId: string) {
@@ -131,8 +127,8 @@ export async function getCurrentActiveSession(userId: string) {
     .is("completed_at", null)
     .order("started_at", { ascending: false })
     .limit(1)
-    .maybeSingle();
-  return data;
+    .maybeSingle()
+  return data
 }
 //gets users stats for leader dashboard
 
@@ -142,17 +138,17 @@ export async function getQuizHistory(sessionId: string) {
     .from("sessions")
     .select("id, role_id, completed_at")
     .eq("id", sessionId)
-    .single();
+    .single()
 
-  if (!session) return null;
+  if (!session) return null
 
   const { data: userAnswers } = await supabase
     .from("user_answers")
     .select("question_id, selected_option, is_correct")
     .eq("session_id", sessionId)
-    .order("answered_at", { ascending: true });
+    .order("answered_at", { ascending: true })
 
-  if (!userAnswers) return null;
+  if (!userAnswers) return null
 
   return {
     submitted: session.completed_at !== null,
@@ -164,7 +160,7 @@ export async function getQuizHistory(sessionId: string) {
       selectedOption: answer.selected_option,
       correct: answer.is_correct,
     })),
-  };
+  }
 }
 
 //get details answers
@@ -172,36 +168,27 @@ export async function getSessionDetails(sessionId: string) {
   const { data } = await supabase
     .from("user_answers")
     .select("*, questions(question, rationale), answers(answer)")
-    .eq("session_id", sessionId);
+    .eq("session_id", sessionId)
 
-  console.log(data);
-  return data;
+  console.log(data)
+  return data
 }
 
 //save one ai generated questions with answers
 interface AiQuestions {
-  userId: string; //get from supabase
-  roleId: string; //get from supabase
-  question: string;
-  rationale: string;
-  choiceA: string;
-  choiceB: string;
-  choiceC: string;
-  choiceD: string;
-  correctAnswer: string;
+  userId: string //get from supabase
+  roleId: string //get from supabase
+  question: string
+  rationale: string
+  choiceA: string
+  choiceB: string
+  choiceC: string
+  choiceD: string
+  correctAnswer: string
 }
 export async function saveAiQuestions(aiQuestions: AiQuestions) {
-  const {
-    userId,
-    roleId,
-    question,
-    rationale,
-    choiceA,
-    choiceB,
-    choiceC,
-    choiceD,
-    correctAnswer,
-  } = aiQuestions;
+  const { userId, roleId, question, rationale, choiceA, choiceB, choiceC, choiceD, correctAnswer } =
+    aiQuestions
 
   const { data: newQuestion } = await supabase
     .from("questions")
@@ -214,9 +201,9 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       source: "user_generated",
     })
     .select()
-    .single();
+    .single()
 
-  if (!newQuestion) return null;
+  if (!newQuestion) return null
 
   await supabase.from("answers").insert([
     {
@@ -243,9 +230,9 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       is_correct: correctAnswer === "D",
       display_order: 4,
     },
-  ]);
+  ])
 
-  return newQuestion;
+  return newQuestion
 }
 //save one ai generated questions with answers
 
@@ -253,28 +240,28 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
 export async function getUserInfo() {
   const {
     data: { user },
-  } = await supabase.auth.getUser();
-  console.log("Authenticated user info", user);
-  return user;
+  } = await supabase.auth.getUser()
+  console.log("Authenticated user info", user)
+  return user
 }
 
 //extra functions to get tables info
 
 export async function getQuestions() {
-  const { data } = await supabase.from("questions").select("*");
-  console.log("questions", data);
-  return data;
+  const { data } = await supabase.from("questions").select("*")
+  console.log("questions", data)
+  return data
 }
 
 export async function getAnswers() {
-  const { data } = await supabase.from("answers").select("*");
-  console.log("answers", data);
-  return data;
+  const { data } = await supabase.from("answers").select("*")
+  console.log("answers", data)
+  return data
 }
 
 export async function getUserAnswers() {
   //keep track answers per session
-  const { data } = await supabase.from("user_answers").select("*");
-  console.log("user_answers", data);
-  return data;
+  const { data } = await supabase.from("user_answers").select("*")
+  console.log("user_answers", data)
+  return data
 }

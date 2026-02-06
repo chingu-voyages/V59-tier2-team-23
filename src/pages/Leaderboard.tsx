@@ -1,4 +1,10 @@
 import LeaderboardStatCard from "../components/LB_Stat_Card"
+import {
+  getUserInfo,
+  getSessions,
+  getAllSessionsUser,
+  getAllSessionsForRole,
+} from "../utils/getData"
 
 export default function Leaderboard() {
   //// TEMP FAKE DATA
@@ -9,12 +15,6 @@ export default function Leaderboard() {
     "Overall Correctness",
   ]
 
-  const users = fakeLeaderboardStats.users
-  const topUsers = [...users]
-    .sort((a, b) => b.summary.overallAverageScore - a.summary.overallAverageScore)
-    .slice(0, 10)
-  //// TEMP FAKE DATA ENDS
-
   /*PLANNING SESSION - 
 So I'm going to access the real data, figure out exactly what I'm using, 
 
@@ -24,10 +24,10 @@ In the LeaderBoardComponents, I will have a big card for each "Top 10 topic" and
 For topics, I'll begin with overall number of q.s answered and overall correctness, before diving into those metrics per ind. role studied for
 */
   return (
-    <div className='flex flex-col items-center bg-gradient-to-br from-blue-500 to-pink-500'>
+    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 min-h-9/12'>
       {/* 
       
-      So the whole things needs to be minimum, almost enough to covr the screen height wise
+      So the whole things needs to be minimum, almost enough to cover the screen height wise
 
       Needs to have a TTILE
 
@@ -40,9 +40,15 @@ For topics, I'll begin with overall number of q.s answered and overall correctne
         <h1>Welcome to the Leaderboard, Firstname!</h1>
       </div>
 
-      {fakeTitles.map((title) => (
-        <LeaderboardStatCard title={title || "title not found"} />
-      ))}
+      <div>
+        <div className='text-center p-4 text-2xl '>
+          <h1>Display data for- Top Ten Users for Having Answered the Most Questions</h1>
+        </div>
+
+        <div>
+          <LeaderboardStatCard />
+        </div>
+      </div>
     </div>
   )
 }
