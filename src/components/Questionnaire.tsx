@@ -1,26 +1,41 @@
 import questionsData from "../data/questions.json";
+import essayQuestionsData from "../data/essayquestions.json";
 import { use, useState, type JSX } from "react";
 import type {
   RoleQuestions,
   Flashcard,
+  Essaycard,
   UserAnswer,
   OptionKey,
   QuestionnaireResult,
   AppStep,
+  FreeResponseAnswer,
+  QuestionTypeOption,
 } from "../types/questions.ts";
 import { aggregate } from "../utils/results.ts";
 import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
+import EssayCard from "./EssayCard.tsx";
+import FreeResponseResults from "./FreeResponseResults.tsx";
 import { getRoles } from "../utils/getData.ts";
 
 const roles = questionsData as RoleQuestions[];
 const rolesPromise = getRoles();
 
+const essayQuestions = essayQuestionsData;
+
 interface RoleSelectorProps {
   roles: RoleQuestions[];
   selectedRole: RoleQuestions | null;
   onSelect: (role: RoleQuestions) => void;
+  onBegin: () => void;
+}
+
+interface QuestionSelectorProps {
+  types: QuestionTypeOption[];
+  selectedType: QuestionTypeOption | null;
+  onSelect: (type: QuestionTypeOption) => void;
   onBegin: () => void;
 }
 
@@ -42,13 +57,13 @@ interface FeedbackProps {
   total: number;
 }
 
-// interface ResultsProps {
-//   result: QuestionnaireResult;
-// }
-
 export default function Questionnaire() {
   const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
   const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
+  const [selectedType, setSelectedType] = useState<QuestionTypeOption | null>(
+    null,
+  );
+  const [freeResponses, setFreeResponses] = useState<FreeResponseAnswer[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
@@ -59,7 +74,31 @@ export default function Questionnaire() {
     null,
   );
 
+  const QUESTION_TYPES: QuestionTypeOption[] = [
+    {
+      type: "FREE_RESPONSE",
+      title: "Free Response",
+      description: "Write detailed answers in your own words.",
+    },
+    {
+      type: "MULTIPLE_CHOICE",
+      title: "Multiple Choice",
+      description: "Select from predefined answers.",
+    },
+    {
+      type: "BOTH",
+      title: "Both",
+      description:
+        "Answer using multiple choice and expand with free response.",
+    },
+  ];
+
+  const roleQuestions: Essaycard[] = selectedRole
+    ? essayQuestions.filter((q) => q.role === selectedRole.role)
+    : [];
+
   console.log(use(rolesPromise));
+
 
   function RoleSelector({
     roles,
@@ -104,6 +143,59 @@ export default function Questionnaire() {
           disabled:opacity-50 disabled:cursor-not-allowed
           hover:bg-blue-700 transition
         "
+          >
+            Begin Questionnaire
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  function QuestionSelector({
+    types,
+    selectedType,
+    onSelect,
+    onBegin,
+  }: QuestionSelectorProps) {
+    return (
+      <div className="sm:min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="w-full max-w-md space-y-6 mt-10 mb-10">
+          <h2 className="text-2xl font-bold text-center">
+            Select Question Format
+          </h2>
+
+          <div className="space-y-3">
+            {types.map((t) => {
+              const isSelected = selectedType?.type === t.type;
+
+              return (
+                <button
+                  key={t.type}
+                  onClick={() => onSelect(t)}
+                  className={`
+                  w-full rounded-xl border p-4 text-left transition
+                  ${
+                    isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-200 hover:bg-blue-50"
+                  }
+                `}
+                >
+                  <h3 className="font-semibold">{t.title}</h3>
+                  <p className="text-sm text-gray-600">{t.description}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={onBegin}
+            disabled={!selectedType}
+            className="
+            w-full rounded-lg bg-blue-600 py-3 text-white font-semibold
+            disabled:opacity-50 disabled:cursor-not-allowed
+            hover:bg-blue-700 transition
+          "
           >
             Begin Questionnaire
           </button>
@@ -332,7 +424,31 @@ export default function Questionnaire() {
           if (!selectedRole) return;
           setCurrentIndex(0);
           setUserAnswers([]);
-          setStep("QUESTION");
+          setStep("QUESTION_SELECTION");
+        }}
+      />
+    );
+  }
+
+  if (step === "QUESTION_SELECTION") {
+    return (
+      <QuestionSelector
+        types={QUESTION_TYPES}
+        selectedType={selectedType}
+        onSelect={setSelectedType}
+        onBegin={() => {
+          if (!selectedType) return;
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          if (selectedType.type === "FREE_RESPONSE") {
+            setStep("FR_QUESTION");
+          }
+          if (selectedType.type === "MULTIPLE_CHOICE") {
+            setStep("MC_QUESTION");
+          }
+          if (selectedType.type === "BOTH") {
+            setStep("BOTH_QUESTION");
+          }
         }}
       />
     );
@@ -344,7 +460,7 @@ export default function Questionnaire() {
 
   const currentQuestion = selectedRole.flashcards[currentIndex];
 
-  if (step === "QUESTION") {
+  if (step === "MC_QUESTION") {
     return (
       <QuestionCard
         question={currentQuestion}
@@ -374,6 +490,30 @@ export default function Questionnaire() {
     );
   }
 
+  if (step === "FR_QUESTION") {
+    return (
+      <EssayCard
+        questions={roleQuestions}
+        onSubmitAll={(answers) => {
+          setFreeResponses(answers);
+          setStep("FR_RESULTS");
+        }}
+      />
+    );
+  }
+
+  if (step === "BOTH_QUESTION") {
+    return (
+      <EssayCard
+        questions={roleQuestions}
+        onSubmitAll={(answers) => {
+          setFreeResponses(answers);
+          setStep("MC_QUESTION");
+        }}
+      />
+    );
+  }
+
   if (step === "FEEDBACK" && lastQuestion && lastUserAnswer) {
     return (
       <Feedback
@@ -385,7 +525,7 @@ export default function Questionnaire() {
           const nextIndex = currentIndex + 1;
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
-            setStep("QUESTION");
+            setStep("MC_QUESTION");
           } else if (nextIndex < selectedRole.flashcards.length && submitted) {
             setCurrentIndex(nextIndex);
             setLastUserAnswer(userAnswers[nextIndex]);
@@ -400,6 +540,23 @@ export default function Questionnaire() {
             setCurrentIndex(prevIndex);
             setLastUserAnswer(userAnswers[prevIndex]);
             setLastQuestion(selectedRole.flashcards[prevIndex]);
+          }
+        }}
+      />
+    );
+  }
+
+  if (step === "FR_RESULTS") {
+    return (
+      <FreeResponseResults
+        responses={freeResponses}
+        onBack={() => {
+          // Decide where to go next
+          if (selectedType?.type === "BOTH") {
+            setCurrentIndex(0);
+            setStep("MC_QUESTION");
+          } else {
+            setStep("ROLE_SELECTION");
           }
         }}
       />
@@ -425,7 +582,7 @@ export default function Questionnaire() {
           setLastUserAnswer(null);
           setSubmitted(false);
           setLastResult(null);
-          setStep("QUESTION");
+          setStep("MC_QUESTION");
         }}
         onReview={(answer: UserAnswer, index: number) => {
           const question = selectedRole.flashcards[index];
