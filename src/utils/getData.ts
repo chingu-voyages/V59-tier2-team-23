@@ -39,12 +39,15 @@ export async function startSession(
     data: { user },
   } = await supabase.auth.getUser();
   console.log("Authenticated user info", user);
+  console.log(user?.user_metadata.name);
   if (user) {
+    const fName = user?.user_metadata.name.split(" ")[0] || "user";
     const { data } = await supabase
       .from("sessions")
       .insert({
         user_id: user?.id,
         role_id: roleId,
+        user_name: fName,
         score: score,
         total_questions: totalQuestions,
       })
@@ -61,6 +64,7 @@ export async function trackUserAnswers(
   questionId: string,
   sessionId: string,
   answerId: string,
+  selectedOption: "A" | "B" | "C" | "D",
   isCorrect: boolean,
 ) {
   const { data } = await supabase
@@ -69,6 +73,7 @@ export async function trackUserAnswers(
       question_id: questionId,
       session_id: sessionId,
       answer_id: answerId,
+      selected_option: selectedOption,
       is_correct: isCorrect,
     })
     .select();
@@ -76,22 +81,22 @@ export async function trackUserAnswers(
 }
 
 //finish session
-
 export async function finishSession(correctAnswers: number, sessionId: string) {
   const { data } = await supabase
     .from("sessions")
     .update({ score: correctAnswers, completed_at: new Date().toISOString() })
     .eq("id", sessionId)
-    .select();
+    .select()
+    .single();
   console.log(data);
 }
 
-//gets users stats for leader dashboard
+//gets users stats for leader dashboard get sessions for all users////
 export async function getAllSessionsForRole(roleId: string) {
-  //for leader board and calculate percentage
+  console.log(roleId);
   const { data } = await supabase
     .from("sessions")
-    .select("user_id, score, total_questions, completed_at")
+    .select("user_id, score, total_questions, completed_at, user_name")
     .eq("role_id", roleId)
     .not("completed_at", "is", null);
   console.log("get all session for role", data);
@@ -99,23 +104,74 @@ export async function getAllSessionsForRole(roleId: string) {
   return data;
 }
 
-//get user session history
+//get one user session history
 export async function getAllSessionsUser(userId: string) {
-  const { data } = await supabase
+  console.log(userId);
+  const { data, error } = await supabase
     .from("sessions")
     .select("*, roles(name)")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
+    .order("started_at", { ascending: false });
+  console.log(error);
   console.log("user sessions", data);
   return data;
+}
+
+export async function getSessions() {
+  const { data } = await supabase.from("sessions").select("*");
+  console.log("sessions", data);
+  return data;
+}
+//get cuurent active session
+export async function getCurrentActiveSession(userId: string) {
+  const { data } = await supabase
+    .from("sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .is("completed_at", null)
+    .order("started_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data;
+}
+//gets users stats for leader dashboard
+
+//get quizHistory
+export async function getQuizHistory(sessionId: string) {
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("id, role_id, completed_at")
+    .eq("id", sessionId)
+    .single();
+
+  if (!session) return null;
+
+  const { data: userAnswers } = await supabase
+    .from("user_answers")
+    .select("question_id, selected_option, is_correct")
+    .eq("session_id", sessionId)
+    .order("answered_at", { ascending: true });
+
+  if (!userAnswers) return null;
+
+  return {
+    submitted: session.completed_at !== null,
+    submittedAt: session.completed_at || new Date().toISOString(),
+    roleId: session.role_id,
+    id: session.id,
+    userAnswers: userAnswers.map((answer) => ({
+      Qid: answer.question_id,
+      selectedOption: answer.selected_option,
+      correct: answer.is_correct,
+    })),
+  };
 }
 
 //get details answers
 export async function getSessionDetails(sessionId: string) {
   const { data } = await supabase
     .from("user_answers")
-    .select("*, questions(question, explanation), answers(answer)")
+    .select("*, questions(question, rationale), answers(answer)")
     .eq("session_id", sessionId);
 
   console.log(data);
@@ -124,10 +180,10 @@ export async function getSessionDetails(sessionId: string) {
 
 //save one ai generated questions with answers
 interface AiQuestions {
-  userId: string;
-  roleId: string;
+  userId: string; //get from supabase
+  roleId: string; //get from supabase
   question: string;
-  explanation: string;
+  rationale: string;
   choiceA: string;
   choiceB: string;
   choiceC: string;
@@ -139,7 +195,7 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
     userId,
     roleId,
     question,
-    explanation,
+    rationale,
     choiceA,
     choiceB,
     choiceC,
@@ -153,7 +209,7 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       user_id: userId,
       role_id: roleId,
       question: question,
-      explanation: explanation,
+      rationale: rationale,
       difficulty: "intermediate",
       source: "user_generated",
     })
@@ -216,21 +272,9 @@ export async function getAnswers() {
   return data;
 }
 
-export async function getSessions() {
-  const { data } = await supabase.from("sessions").select("*");
-  console.log("sessions", data);
-  return data;
-}
-
 export async function getUserAnswers() {
   //keep track answers per session
   const { data } = await supabase.from("user_answers").select("*");
   console.log("user_answers", data);
   return data;
 }
-//thi on is on te top too just wanted to have it on the tables functions too
-// export async function getRoles() {
-//   const { data } = await supabase.from("roles").select("*");
-//   console.log("roles data", data);
-//   return data;
-// }

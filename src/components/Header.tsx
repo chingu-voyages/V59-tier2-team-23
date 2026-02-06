@@ -19,7 +19,7 @@ export default function Header({
 
   let navOptions: string[] = ["home"];
   if (!isAuthLoading && user) {
-    navOptions = ["home", "roles", "history", "logout", "supabaseexamples"];
+    navOptions = ["home", "roles", "geminitest", "supabaseexamples", "history", "logout"];
   }
   if (!isAuthLoading && isGuestLogin && pathname !== "/home") {
     navOptions = ["home", "roles"];
@@ -28,15 +28,15 @@ export default function Header({
   return (
     <>
       <header
-        className={`w-full px-[1rem] py-[0.75rem] sm:px-[1.5rem] bg-[var(--color-surface)] text-white text-nowrap leading-none flex flex-col gap-[1rem] justify-between  ${className}`}
+        className={`w-full px-4 py-3 sm:px-6 bg-(--color-surface) text-white text-nowrap leading-none flex flex-col gap-4 justify-between  ${className}`}
         {...props}
       >
         <p className="text-end">{formatDate(date)}</p>
-        <nav className="flex justify-between items-end gap-[0.5rem]">
+        <nav className="flex justify-between items-end gap-2">
           <NavLink to="/" className="font-bold text-[1.5rem]">
             Quizest
           </NavLink>
-          <ul className="flex justify-between gap-[1rem] overflow-x-auto overflow-y-hidden">
+          <ul className="flex justify-between gap-4 overflow-x-auto overflow-y-hidden">
             {navOptions.map((nav) => (
               <li key={nav} className="capitalize">
                 {
