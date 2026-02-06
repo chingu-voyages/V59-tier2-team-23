@@ -52,7 +52,7 @@ Props): JSX.Element {
       </button>
 
       <p>
-        Or use one of these buttons to generate 20 additional questions for the
+        Or use one of these buttons to generate 5 new questions for the
         role of your choice.
       </p>
 
