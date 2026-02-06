@@ -34,11 +34,11 @@ Constraints:
 * [ ] If the role is Scrum Product Owner, the questions should also be helpful for passing the CSPO certification test
 * [ ] If the role is Web Developer or Python Developer, some of the generated questions should be about data structures and algorithms
 * [ ] If the role is UI/UX Designer, the questions should not include questions that are specific to HTML, CSS, or programming languages. They should stress UI/UX concepts and practices, like general UI design, responsiveness, and accessibility.
-* [ ] Generate exactly 20 new questions - no more, no less.
+* [ ] Generate exactly 5 new questions - no more, no less.
 
 Format:
 
-* [ ] Produce exactly 20 flashcards, numbered 1 through 20.
+* [ ] Produce exactly 5 flashcards, numbered 1 through 5.
 * [ ] Do not include any preamble, introduction, or explanation - only the list of questions.
 `;
 

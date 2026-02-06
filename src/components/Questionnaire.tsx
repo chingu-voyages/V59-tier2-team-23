@@ -1,6 +1,6 @@
 import questionsData from "../data/questions.json";
 import essayQuestionsData from "../data/essayquestions.json";
-import { useState, type JSX } from "react";
+import { use, useState, type JSX } from "react";
 import type {
   RoleQuestions,
   Flashcard,
@@ -18,8 +18,10 @@ import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
 import EssayCard from "./EssayCard.tsx";
 import FreeResponseResults from "./FreeResponseResults.tsx";
+import { getRoles } from "../utils/getData.ts";
 
 const roles = questionsData as RoleQuestions[];
+const rolesPromise = getRoles();
 
 const essayQuestions = essayQuestionsData;
 
@@ -94,6 +96,9 @@ export default function Questionnaire() {
   const roleQuestions: Essaycard[] = selectedRole
     ? essayQuestions.filter((q) => q.role === selectedRole.role)
     : [];
+
+  console.log(use(rolesPromise));
+
 
   function RoleSelector({
     roles,
