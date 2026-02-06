@@ -2,6 +2,8 @@ import type { JSX } from "react";
 import { useState, useRef, useEffect } from "react";
 import { geminiModel } from "../components/Geminifunction";
 import { handleGenerateMoreQuestions } from "../components/MoreQuestions";
+import { useAuth } from "../context/AuthContext";
+import { saveAiQuestions } from "../utils/getData";
 
 type Props = {
   // selectedRole?: string;
@@ -14,6 +16,9 @@ Props): JSX.Element {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const selectedRoleId = "12258174-d9a6-458c-8b61-2c2f469dfd1c"; //developer
+  const { user } = useAuth();
+  const userId = user?.id;
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -96,28 +101,14 @@ Props): JSX.Element {
         onClick={async () => {
           const result = await handleGenerateMoreQuestions("Web Developer");
           console.log(result);
-          //This adds one question into database using the save to ai function it take an object with this shape
-          //interface AiQuestions {
-          //   userId: string; get from supabse functions
-          //   roleId: string; get from supabse functions
-
-          //   question: string;
-          //   rationale: string;
-          //   choiceA: string;
-          //   choiceB: string;
-          //   choiceC: string;
-          //   choiceD: string;
-          //   correctAnswer: string;
-          // }
-          //  is it possible  to ask gemini to return data with the following structure ? if not i need to create another function to transform it
-          // {question: string;
-          //   rationale: string;
-          //   choiceA: string;
-          //   choiceB: string;
-          //   choiceC: string;
-          //   choiceD: string;
-          //   correctAnswer: string;}
-          //note: we need to also add  role id and user id from supabase
+          //call function to add question
+          const cleanedResult = result
+            .replace(/```json\s*/gi, "")
+            .replace(/```\s*/gi, "")
+            .trim()
+            .replace(/^\d+\.\s*/, "");
+          const obj = JSON.parse(cleanedResult);
+          saveAiQuestions({ ...obj, userId, roleId: selectedRoleId });
 
           setOutput(result);
         }}

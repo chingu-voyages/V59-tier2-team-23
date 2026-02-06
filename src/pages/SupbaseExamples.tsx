@@ -10,6 +10,7 @@ import {
   getAllSessionsForRole,
   getAllSessionsUser,
   getSessions,
+  getSessionDetails,
 } from "../utils/getData";
 
 const buttonStyles =
@@ -17,7 +18,7 @@ const buttonStyles =
 const sectionStyles = "flex flex-col gap-4  p-4 rounded-lg shadow-lg m-4";
 // const selectedRoleId = "44b53191-0f2c-4260-949b-e7143995f991"; //scrumMasters
 const selectedRoleId = "12258174-d9a6-458c-8b61-2c2f469dfd1c"; //developer
-const sessionId = "4be10fb3-119f-4f8e-8c7b-7c6708e66f8d"; //update this every session starting new quiz
+const sessionId = "8fda9f4f-d356-4d66-9774-4c6afd29383f"; //update this every session starting new quiz
 const score = -1000;
 const totalQuestions = 5;
 const userId = "8fda9f4f-d356-4d66-9774-4c6afd29383f"; //my userId
@@ -78,6 +79,12 @@ export default function SupabaseExamples() {
         </button>
         <button onClick={getUserAnswers} className={buttonStyles}>
           Get User answers
+        </button>
+        <button
+          onClick={() => getSessionDetails(sessionId)}
+          className={buttonStyles}
+        >
+          get seesion details
         </button>
       </section>
 

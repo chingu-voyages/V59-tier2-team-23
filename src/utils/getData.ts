@@ -215,7 +215,7 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
     })
     .select()
     .single();
-
+  console.log(newQuestion);
   if (!newQuestion) return null;
 
   await supabase.from("answers").insert([
@@ -244,7 +244,7 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       display_order: 4,
     },
   ]);
-
+  console.log(newQuestion);
   return newQuestion;
 }
 //save one ai generated questions with answers
