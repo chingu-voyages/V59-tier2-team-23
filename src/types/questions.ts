@@ -13,11 +13,18 @@ export type AppStep =
 export type QuestionType = "FREE_RESPONSE" | "MULTIPLE_CHOICE" | "BOTH";
 
 export interface Flashcard {
-  id: number;
+  id: number | string;
   question: string;
   options: Record<OptionKey, string>;
   answer: OptionKey;
   rationale: string;
+  answerIds: Record<OptionKey, string>;
+}
+export interface Essaycard {
+  id: number;
+  role: string;
+  question: string;
+  feedback: string;
 }
 
 export interface Essaycard {
@@ -28,6 +35,7 @@ export interface Essaycard {
 }
 
 export interface RoleQuestions {
+  id: string;
   role: string;
   focus: string;
   flashcards: Flashcard[];
@@ -40,7 +48,7 @@ export interface QuestionTypeOption {
 }
 
 export interface UserAnswer {
-  Qid: number;
+  Qid: number | string;
   selectedOption: OptionKey;
   correct: boolean;
 }
