@@ -8,6 +8,11 @@ export async function getRoles() {
   console.log("roles data", data);
   return data;
 }
+export async function getRole(roleId: string) {
+  const { data } = await supabase.from("roles").select("*").eq("id", roleId);
+  console.log(`role(${roleId}) data`, data);
+  return data;
+}
 
 //get role questions login users
 export async function getRoleQuestions(selectedRoleId: string, userId: string) {
@@ -133,6 +138,11 @@ export async function getAllSessionsUser(userId: string) {
 export async function getSessions() {
   const { data } = await supabase.from("sessions").select("*");
   console.log("sessions", data);
+  return data;
+}
+export async function getSession(sessionId: string) {
+  const { data } = await supabase.from("sessions").select("*").eq("id", sessionId);
+  console.log(`session(${sessionId})`, data);
   return data;
 }
 //get cuurent active session

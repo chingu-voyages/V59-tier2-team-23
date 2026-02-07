@@ -16,6 +16,7 @@ import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
 import EssayCard from "./EssayCard.tsx";
 import FreeResponseResults from "./FreeResponseResults.tsx";
+import { v4 as uuidv4 } from 'uuid';
 import {
   finishSession,
   getRolesWithQuestions,
@@ -57,19 +58,33 @@ interface QuestionSelectorProps {
   onSelect: (type: QuestionTypeOption) => void;
   onBegin: () => void;
 }
+interface Props {
+  stepInit?: AppStep;
+  selectedRoleInit?: RoleQuestions;
+  userAnswersInit?: UserAnswer[];
+  lastResultInit?: QuestionnaireResult
 
-export default function Questionnaire() {
-  const [step, setStep] = useState<AppStep>("ROLE_SELECTION");
-  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);
+}
+export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersInit, lastResultInit }: Props) {
+  const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION");//
+  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);//
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);//
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
-    null,
-  );
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);//
+
+  useEffect(() => {
+    if (selectedRoleInit) setSelectedRole(selectedRoleInit)
+  }, [selectedRoleInit])
+  useEffect(() => {
+    if (userAnswersInit) setUserAnswers(userAnswersInit);
+  }, [userAnswersInit])
+  useEffect(() => {
+    if (lastResultInit) setLastResult(lastResultInit)
+  }, [lastResultInit])
   const { user, isGuestLogin, isAuthLoading } = useAuth();
   const [roles, setRoles] = useState<RoleQuestions[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +93,6 @@ export default function Questionnaire() {
     null,
   );
   const [freeResponses, setFreeResponses] = useState<FreeResponseAnswer[]>([]);
-  console.log(roles);
   const QUESTION_TYPES: QuestionTypeOption[] = [
     {
       type: "FREE_RESPONSE",
@@ -172,11 +186,10 @@ export default function Questionnaire() {
                   onClick={() => onSelect(role)}
                   className={`
                 w-full rounded-xl border p-4 text-left transition
-                ${
-                  isSelected
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white border-gray-200 hover:bg-blue-50"
-                }
+                ${isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-200 hover:bg-blue-50"
+                    }
               `}
                 >
                   <h3 className="font-semibold">{role.role}</h3>
@@ -225,11 +238,10 @@ export default function Questionnaire() {
                   onClick={() => onSelect(t)}
                   className={`
                   w-full rounded-xl border p-4 text-left transition
-                  ${
-                    isSelected
+                  ${isSelected
                       ? "bg-blue-100 border-blue-500"
                       : "bg-white border-gray-200 hover:bg-blue-50"
-                  }
+                    }
                 `}
                 >
                   <h3 className="font-semibold">{t.title}</h3>
@@ -284,11 +296,10 @@ export default function Questionnaire() {
                   onClick={() => onSelect(key as OptionKey)}
                   className={`
                 w-full rounded-lg border p-3 text-left transition
-                ${
-                  isSelected
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white border-gray-300 hover:bg-blue-50"
-                }
+                ${isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-300 hover:bg-blue-50"
+                    }
               `}
                 >
                   <span className="font-semibold mr-2">{key}.</span>
@@ -329,6 +340,7 @@ export default function Questionnaire() {
     ...props
   }: ResultProps): JSX.Element {
     const stats = aggregate(result!.userAnswers);
+
     return (
       <div
         className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`}
@@ -355,13 +367,16 @@ export default function Questionnaire() {
           className="mb-[2.5rem]"
           result={result}
         />
-        <Link
-          to={"/home"}
-          className="mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[20rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]"
-        >
-          Back To Home
-        </Link>
-      </div>
+        <div className=" flex flex-col w-full items-center xs:justify-center gap-[0.3rem] xs:flex-row xs:gap-[0.5rem]">
+          <Link
+            to={"/home"}
+            className="mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]"
+          >
+            Back To Home
+          </Link>
+          {user?.id && <Link to={'/history'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>View History</Link>}
+        </div>
+      </div >
     );
   }
 
@@ -385,6 +400,7 @@ export default function Questionnaire() {
           </h3>
 
           <div className="space-y-3">
+
             {Object.entries(question.options).map(([key, value]) => {
               const isCorrect = key === question.answer;
               const isSelected = key === userAnswer.selectedOption;
@@ -590,6 +606,7 @@ export default function Questionnaire() {
         total={totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
+
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
             setStep("MC_QUESTION");
@@ -642,8 +659,9 @@ export default function Questionnaire() {
       setLastResult({
         submitted: true,
         submittedAt: new Date().toISOString(),
-        roleId: roles.indexOf(selectedRole) + 1,
+        roleId: roles.indexOf(selectedRole),
         userAnswers,
+        id: uuidv4()
       });
     return (
       <Results
