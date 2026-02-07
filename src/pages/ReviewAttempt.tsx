@@ -29,7 +29,6 @@ export default function ReviewAttempt(): JSX.Element {
         }
         updateSelectedRole();
     }, [id, user]);
-    console.log(lastResult);
 
     if (lastResult && selectedRole)
         return (

@@ -374,12 +374,11 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
           >
             Back To Home
           </Link>
-          <Link to={'/history'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>View History</Link>
+          {user?.id && <Link to={'/history'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>View History</Link>}
         </div>
       </div >
     );
   }
-  console.log(lastQuestion, "qq");
 
   function Feedback({
     question,
@@ -607,8 +606,6 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
         total={totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
-          console.log(userAnswers, "answer");
-          console.log(nextIndex, "index");
 
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
