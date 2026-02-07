@@ -1,0 +1,92 @@
+[
+  {
+    "role": "Scrum Product Owner",
+    "id": 1,
+    "question": "Can you walk us through a time when you had to reprioritize the product backlog mid-sprint or mid-release? What factors influenced your decision?",
+    "feedback": ""
+  },
+  {
+    "role": "Scrum Product Owner",
+    "id": 2,
+    "question": "How do you define and measure ‘value’ for your product, and how does that definition influence your roadmap and backlog refinement?",
+    "feedback": ""
+  },
+  {
+    "role": "Scrum Product Owner",
+    "id": 3,
+    "question": "Describe a situation where the Scrum Team disagreed with your priorities or approach. How did you handle the situation, and what was the outcome?",
+    "feedback": ""
+  },
+  {
+    "role": "Scrum Master",
+    "id": 4,
+    "question": "How do you help a Scrum Team continuously improve its way of working, especially when the team believes things are already ‘good enough’?",
+    "feedback": ""
+  },
+  {
+    "role": "Scrum Master",
+    "id": 5,
+    "question": "How do you measure the effectiveness of your role as a Scrum Master, beyond metrics like velocity or sprint completion?",
+    "feedback": ""
+  },
+  {
+    "role": "Scrum Master",
+    "id": 6,
+    "question": "Can you describe a time when you had to coach a Product Owner, stakeholder, or leader who was resistant to Scrum principles?",
+    "feedback": ""
+  },
+  {
+    "role": "UI/UX Designer",
+    "id": 7,
+    "question": "Tell us about a project where user feedback significantly changed your original design. How did you respond, and what did you learn?",
+    "feedback": ""
+  },
+  {
+    "role": "UI/UX Designer",
+    "id": 8,
+    "question": "How do you collaborate with developers and product managers to ensure designs are implemented as intended?",
+    "feedback": ""
+  },
+  {
+    "role": "UI/UX Designer",
+    "id": 9,
+    "question": "How do you measure the success of a UI/UX design after it has been released?",
+    "feedback": ""
+  },
+  {
+    "role": "Web Developer",
+    "id": 10,
+    "question": "Can you describe a web project you’re particularly proud of and explain the technical and design decisions you made?",
+    "feedback": ""
+  },
+  {
+    "role": "Web Developer",
+    "id": 11,
+    "question": "Tell us about a challenging bug or performance issue you encountered in a web application. How did you diagnose and resolve it?",
+    "feedback": ""
+  },
+  {
+    "role": "Web Developer",
+    "id": 12,
+    "question": "How do you stay current with evolving web technologies and decide what’s worth learning or adopting?",
+    "feedback": ""
+  },
+  {
+    "role": "Python Developer",
+    "id": 13,
+    "question": "How do you structure Python code to keep it readable, testable, and easy to maintain as a project grows?",
+    "feedback": ""
+  },
+  {
+    "role": "Python Developer",
+    "id": 14,
+    "question": "Tell us about a time you had to optimize Python code for performance or scalability. What approach did you take?",
+    "feedback": ""
+  },
+  {
+    "role": "Python Developer",
+    "id": 15,
+    "question": "How do you use testing, debugging, and error handling in your Python development workflow?",
+    "feedback": ""
+  }
+]
