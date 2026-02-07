@@ -8,7 +8,7 @@ import type { QuestionnaireResult } from '../types/questions';
 import { getAllSessionsUser } from '../utils/getData';
 import { useAuth } from '../context/AuthContext';
 export default function History({ className = '', ...props }: Props): JSX.Element {
-    const [allAttempts, setAllAttempts] = useState<any[] | null>(null);
+    const [allAttempts, setAllAttempts] = useState<any[]>([]);
     const { user } = useAuth();
     useEffect(() => {
         async function updateHistory() {
@@ -20,23 +20,19 @@ export default function History({ className = '', ...props }: Props): JSX.Elemen
         updateHistory();
     }, [user]);
 
-    if (allAttempts)
-        return (
-            <div className={`p-[1rem]  flex flex-col max-w-[40rem] w-full mx-auto  ${className}`} {...props}>
-                <h1 className='text-[3rem] text-black font-bold'>History</h1>
-                <div></div>
-
-                <ol className=''>
-                    {allAttempts.map((atmpt) => {
-                        if (atmpt.completed_at)
-                            return <li key={atmpt.id}>
-                                <Attempt attempt={atmpt as QuestionnaireResult} />
-                            </li>
-                    }
-                    )}
-                </ol>
-            </div >
-        );
-    else return <h1 className='ms-[2rem] text-black text-[3rem]'>PLEASE WAIT A SECOND</h1>
+    return (
+        <div className={`p-[1rem]  flex flex-col max-w-[40rem] w-full mx-auto  ${className}`} {...props}>
+            <h1 className='text-[3rem] text-black font-bold'>History</h1>
+            {allAttempts.length == 0 && <p>No history yet.</p>}
+            {allAttempts.length > 0 && <ol className=''>{allAttempts.map((atmpt) => {
+                if (atmpt.completed_at)
+                    return <li key={atmpt.id}>
+                        <Attempt attempt={atmpt as QuestionnaireResult} />
+                    </li>
+            }
+            )}
+            </ol>}
+        </div >
+    );
 
 } 

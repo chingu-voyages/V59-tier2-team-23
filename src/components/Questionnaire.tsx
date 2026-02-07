@@ -93,7 +93,6 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
     null,
   );
   const [freeResponses, setFreeResponses] = useState<FreeResponseAnswer[]>([]);
-  console.log(roles);
   const QUESTION_TYPES: QuestionTypeOption[] = [
     {
       type: "FREE_RESPONSE",
@@ -380,6 +379,7 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
       </div >
     );
   }
+  console.log(lastQuestion, "qq");
 
   function Feedback({
     question,
@@ -401,6 +401,7 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
           </h3>
 
           <div className="space-y-3">
+
             {Object.entries(question.options).map(([key, value]) => {
               const isCorrect = key === question.answer;
               const isSelected = key === userAnswer.selectedOption;
@@ -606,7 +607,8 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
         total={totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
-          console.log(userAnswers);
+          console.log(userAnswers, "answer");
+          console.log(nextIndex, "index");
 
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
