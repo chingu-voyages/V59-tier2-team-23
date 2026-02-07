@@ -1,3 +1,5 @@
+import type { sortedUserType } from "../pages/Leaderboard"
+
 type IndividualUserStats = {
   name: string
   place: number
@@ -5,41 +7,26 @@ type IndividualUserStats = {
   metricType?: "Grade" | "Quantity Studied" // probably will delete this line
 }
 
-type TopTenStatCard = {
-  users: IndividualUserStats[]
-}
+// type TopTenStatCard = {
+//   users: IndividualUserStats[]
+// }
 
-export default function LeaderboardStatCard() {
+export default function LeaderboardStatCard({
+  topTenArray,
+}: {
+  topTenArray: sortedUserType[] | []
+}) {
+  console.log(typeof topTenArray, topTenArray)
   return (
     <div className='flex flex-col items-center pt-10'>
-      {/* CREATE A TABLE HERE USING FLEX OR GRID (probably grid and make sure boundaries don't move, worst case a very long username is cut off or scrolls or something) */}
       <div className='flex flex-col bg-white/20  border-4  border-white rounded-xl'>
-        <div className='flex relative w-100 pt-1.5 pb-1.5 border-2  border-white '>
-          <div className='font-bold sticky left-0 pl-2'> #1</div>
-          <div className='text-center pl-2 pr-2'> John Smith </div>
-          <div className='absolute right-2'> Metric </div>
-        </div>
-        {/* temp placeholder below but they will be displayed dynamically*/}
-        <div className='flex relative w-100 pt-1.5 pb-1.5  border-2  border-white '>
-          <div className='font-bold sticky left-0 pl-2'> #2 </div>
-          <div className='text-center pl-2 pr-2'> Jane Doe </div>
-          <div className='absolute right-2'> Metric </div>
-        </div>
-        <div className='flex relative w-100 pt-1.5 pb-1.5  border-2  border-white '>
-          <div className='font-bold   left-0 pl-2'> #3 </div>
-          <div className='text-center pl-2 pr-2'>Ebenezer Dude</div>
-          <div className='absolute right-2'> Metric </div>
-        </div>
-
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
-        <IndividualUserStat name='John Doe' place={1} metricNumber={4535}></IndividualUserStat>
+        {topTenArray.map((u, i) => (
+          <IndividualUserStat
+            key={u.userId}
+            name={u.userName}
+            place={i + 1}
+            metricNumber={u.totalQuestions}></IndividualUserStat>
+        ))}
       </div>
     </div>
   )
