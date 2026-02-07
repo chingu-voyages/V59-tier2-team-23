@@ -1,5 +1,5 @@
 import questionsData from "../data/questions.json";
-import { use, useState, type JSX } from "react";
+import { use, useEffect, useState, type JSX } from "react";
 import type {
   RoleQuestions,
   Flashcard,
@@ -55,18 +55,27 @@ interface Props {
 }
 export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersInit, lastResultInit }: Props) {
   const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION");//
-  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(selectedRoleInit || null);//
+  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);//
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>(userAnswersInit || []);//
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);//
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(lastResultInit ||
-    null,
-  );
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);//
+
+  useEffect(() => {
+    if (selectedRoleInit && !selectedRole) setSelectedRole(selectedRoleInit)
+  }, [selectedRoleInit])
+  useEffect(() => {
+    if (userAnswersInit && !userAnswers) setUserAnswers(userAnswersInit)
+  }, [userAnswersInit])
+  useEffect(() => {
+    if (lastResultInit && !lastResult) setLastResult(lastResultInit)
+  }, [lastResultInit])
 
   console.log(use(rolesPromise));//
+
 
 
   function RoleSelector({
@@ -192,6 +201,7 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
     ...props
   }: ResultProps): JSX.Element {
     const stats = aggregate(result!.userAnswers);
+
     return (
       <div
         className={`py-[1rem] px-[1.5rem] flex flex-col items-center   ${className}`}
