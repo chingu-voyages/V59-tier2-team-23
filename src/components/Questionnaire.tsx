@@ -70,9 +70,9 @@ export default function Questionnaire() {
   const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
     null,
   );
-  const { user, isGuestLogin } = useAuth();
+  const { user, isGuestLogin, isAuthLoading } = useAuth();
   const [roles, setRoles] = useState<RoleQuestions[]>([]);
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<QuestionTypeOption | null>(
     null,
@@ -103,6 +103,8 @@ export default function Questionnaire() {
     : [];
 
   useEffect(() => {
+    if (isAuthLoading) return;
+
     async function loadRoles() {
       setIsLoading(true);
       const data = await getRolesWithQuestions(user?.id, isGuestLogin);
@@ -111,16 +113,41 @@ export default function Questionnaire() {
     }
 
     loadRoles();
-  }, [user, isGuestLogin]);
+  }, [user, isGuestLogin, isAuthLoading]);
 
-  if (loading)
+  if (isLoading || isAuthLoading)
     return (
       <div className="w-screen h-screen flex  flex-col items-center justify-center  gap-2">
-        <Skeleton variant="rectangular" width="80%" height={50} />
-        <Skeleton variant="rectangular" width="80%" height={50} />
-        <Skeleton variant="rectangular" width="80%" height={50} />
-        <Skeleton variant="rectangular" width="80%" height={50} />
-        <Skeleton variant="rectangular" width="80%" height={50} />
+        <Skeleton
+          variant="rectangular"
+          width="80%"
+          height={50}
+          animation="wave"
+        />
+        <Skeleton
+          variant="rectangular"
+          width="80%"
+          height={50}
+          animation="wave"
+        />
+        <Skeleton
+          variant="rectangular"
+          width="80%"
+          height={50}
+          animation="wave"
+        />
+        <Skeleton
+          variant="rectangular"
+          width="80%"
+          height={50}
+          animation="wave"
+        />
+        <Skeleton
+          variant="rectangular"
+          width="80%"
+          height={50}
+          animation="wave"
+        />
       </div>
     );
 
@@ -490,7 +517,6 @@ export default function Questionnaire() {
   if (!selectedRole) return null;
 
   const totalQuestions = selectedRole.flashcards.length;
-
   const currentQuestion = selectedRole.flashcards[currentIndex];
 
   if (step === "MC_QUESTION") {

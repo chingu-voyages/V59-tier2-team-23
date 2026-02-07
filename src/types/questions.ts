@@ -27,6 +27,13 @@ export interface Essaycard {
   feedback: string;
 }
 
+export interface Essaycard {
+  id: number;
+  role: string;
+  question: string;
+  feedback: string;
+}
+
 export interface RoleQuestions {
   id: string;
   role: string;
