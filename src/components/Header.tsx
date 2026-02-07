@@ -19,7 +19,7 @@ export default function Header({
 
   let navOptions: string[] = ["home"];
   if (!isAuthLoading && user) {
-    navOptions = ["home", "roles", "geminitest", "supabaseexamples", "history", "logout"];
+    navOptions = ["home", "roles", "geminitest", "history", "logout"];
   }
   if (!isAuthLoading && isGuestLogin && pathname !== "/home") {
     navOptions = ["home", "roles"];

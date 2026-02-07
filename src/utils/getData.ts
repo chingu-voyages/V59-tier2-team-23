@@ -1,4 +1,7 @@
+import type { DbQuestion, DbRole } from "./dbTypes";
+import type { Flashcard, RoleQuestions, OptionKey } from "../types/questions";
 import { supabase } from "./supabase";
+
 //get all roles
 export async function getRoles() {
   const { data } = await supabase.from("roles").select("*");
@@ -106,6 +109,16 @@ export async function getAllSessionsForRole(roleId: string) {
     .not("completed_at", "is", null);
   console.log("get all session for role", data);
 
+  return data;
+}
+
+//
+export async function getLeaderboardData() {
+  const { data } = await supabase
+    .from("sessions")
+    .select("user_id, user_name, score, total_questions, role_id roles(name)")
+    .not("completed_at", "is", null);
+  console.log(data);
   return data;
 }
 
@@ -287,4 +300,90 @@ export async function getUserAnswers() {
   const { data } = await supabase.from("user_answers").select("*");
   console.log("user_answers", data);
   return data;
+}
+
+//Data transformers
+export function transformToFlashcard(dbQuestion: DbQuestion): Flashcard {
+  const sortedAnswers = [...dbQuestion.answers].sort(
+    (a, b) => a.display_order - b.display_order,
+  );
+
+  const OptionKeys: OptionKey[] = ["A", "B", "C", "D"];
+  const options: Record<OptionKey, string> = {
+    A: sortedAnswers[0]?.answer || "",
+    B: sortedAnswers[1]?.answer || "",
+    C: sortedAnswers[2]?.answer || "",
+    D: sortedAnswers[3]?.answer || "",
+  };
+
+  const answerIds: Record<OptionKey, string> = {
+    A: sortedAnswers[0]?.id || "",
+    B: sortedAnswers[1]?.id || "",
+    C: sortedAnswers[2]?.id || "",
+    D: sortedAnswers[3]?.id || "",
+  };
+
+  const correctAnswerIndex = sortedAnswers.findIndex((a) => a.is_correct);
+  const correctAnswerKey = OptionKeys[correctAnswerIndex] || "A";
+
+  return {
+    id: dbQuestion.id,
+    question: dbQuestion.question,
+    options,
+    answer: correctAnswerKey,
+    rationale: dbQuestion.rationale || "",
+    answerIds,
+  };
+}
+
+export function transformToRoleQuestions(
+  role: DbRole,
+  questions: DbQuestion[],
+): RoleQuestions {
+  return {
+    id: role.id,
+    role: role.name,
+    focus: role.description,
+    flashcards: questions.map(transformToFlashcard),
+  };
+}
+
+export async function getRolesWithQuestions(
+  userId?: string,
+  isGuest: boolean = false,
+): Promise<RoleQuestions[]> {
+  const { data: roles } = await supabase
+    .from("roles")
+    .select("*")
+    .order("name");
+
+  if (!roles) return [];
+  const rolesWithQuestions: RoleQuestions[] = [];
+  for (const role of roles) {
+    let questions;
+    if (isGuest) {
+      const { data } = await supabase
+        .from("questions")
+        .select("*, answers(*)")
+        .eq("role_id", role.id)
+        .is("user_id", null);
+
+      questions = data;
+    } else if (userId) {
+      const { data } = await supabase
+        .from("questions")
+        .select("*, answers(*)")
+        .eq("role_id", role.id)
+        .or(`user_id.is.null,user_id.eq.${userId}`);
+      questions = data;
+    }
+
+    if (questions && questions.length > 0) {
+      rolesWithQuestions.push(
+        transformToRoleQuestions(role, questions as DbQuestion[]),
+      );
+    }
+  }
+
+  return rolesWithQuestions;
 }
