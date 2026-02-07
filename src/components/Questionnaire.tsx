@@ -80,13 +80,13 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
   const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);//
 
   useEffect(() => {
-    if (selectedRoleInit && !selectedRole) setSelectedRole(selectedRoleInit)
+    if (selectedRoleInit) setSelectedRole(selectedRoleInit)
   }, [selectedRoleInit])
   useEffect(() => {
-    if (userAnswersInit && !userAnswers) setUserAnswers(userAnswersInit)
+    if (userAnswersInit) setUserAnswers(userAnswersInit);
   }, [userAnswersInit])
   useEffect(() => {
-    if (lastResultInit && !lastResult) setLastResult(lastResultInit)
+    if (lastResultInit) setLastResult(lastResultInit)
   }, [lastResultInit])
 
   const QUESTION_TYPES: QuestionTypeOption[] = [
@@ -541,6 +541,8 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
         total={totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
+          console.log(userAnswers);
+
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
             setStep("MC_QUESTION");

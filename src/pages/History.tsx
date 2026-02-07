@@ -25,11 +25,13 @@ export default function History({ className = '', ...props }: Props): JSX.Elemen
             <div className={`p-[1rem]  flex flex-col max-w-[40rem] w-full mx-auto  ${className}`} {...props}>
                 <h1 className='text-[3rem] text-black font-bold'>History</h1>
                 <div></div>
+
                 <ol className=''>
                     {allAttempts.map((atmpt) => {
-                        return <li key={atmpt.id}>
-                            <Attempt attempt={atmpt as QuestionnaireResult} />
-                        </li>
+                        if (atmpt.completed_at)
+                            return <li key={atmpt.id}>
+                                <Attempt attempt={atmpt as QuestionnaireResult} />
+                            </li>
                     }
                     )}
                 </ol>
