@@ -1,3 +1,4 @@
+import { type User } from "@supabase/supabase-js"
 import LeaderboardStatCard from "../components/LB_Stat_Card"
 import {
   getUserInfo,
@@ -5,15 +6,25 @@ import {
   getAllSessionsUser,
   getAllSessionsForRole,
 } from "../utils/getData"
+// import { useUserData } from "../utils/fetchStats"
+import { useState, useEffect } from "react"
 
 export default function Leaderboard() {
-  //// TEMP FAKE DATA
-  const fakeTitles = [
-    "Amount Studied Per Role",
-    "Correctness Per Role",
-    "Overall Amount Studied",
-    "Overall Correctness",
-  ]
+  const [userData, setUserData] = useState<User | null>(null)
+  const [loadingUser, setLoadingUser] = useState(true)
+
+  const firstName = userData?.user_metadata.name.split(" ")[0]
+  const lastName = userData?.user_metadata.name.split(" ")[1]
+
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getUserInfo()
+      setUserData(user)
+      setLoadingUser(false)
+    }
+
+    fetchUser()
+  }, [])
 
   /*PLANNING SESSION - 
 So I'm going to access the real data, figure out exactly what I'm using, 
@@ -23,8 +34,12 @@ In the LeaderBoardComponents, I will have a big card for each "Top 10 topic" and
 
 For topics, I'll begin with overall number of q.s answered and overall correctness, before diving into those metrics per ind. role studied for
 */
+
+  if (loadingUser) {
+    return <div> Loading... </div>
+  }
   return (
-    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 min-h-9/12'>
+    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
       {/* 
       
       So the whole things needs to be minimum, almost enough to cover the screen height wise
@@ -37,7 +52,7 @@ For topics, I'll begin with overall number of q.s answered and overall correctne
       */}
 
       <div className='text-center p-6 text-5xl '>
-        <h1>Welcome to the Leaderboard, Firstname!</h1>
+        <h1>Welcome to the Leaderboard, {firstName}!</h1>
       </div>
 
       <div>
