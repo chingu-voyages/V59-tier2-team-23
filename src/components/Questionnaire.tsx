@@ -349,13 +349,19 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
         <h1 className="text-[1.5rem] text-center  mb-[1rem]">
           {selectedRole?.role} prep results
         </h1>
-        <div className="flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]">
+        <div className="flex items-end justify-between w-full max-w-115 mb-[1rem] gap-[0.5rem]">
           <ResultStats stats={stats} />
           <button
             onClick={onRetry}
             className="h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white"
           >
             Retry
+          </button>
+          <button
+            // onClick={}
+            className="h-[2.2rem] rounded-[0.3rem] bg-(--color-surface) px-3 text-white"
+          >
+            Retry With New Questions
           </button>
         </div>
         <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
