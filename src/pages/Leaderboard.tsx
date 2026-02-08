@@ -20,13 +20,17 @@ export type SessionType = {
   user_name: string
 }
 
-export type sortedUserType = {
+export type SortedUserType = {
   userId: string
   userName: string
   totalSessions: number
   totalQuestions: number
   totalScore: number
+  role?: string
+  metricType?: "totalQuestions" | "totalScore"
 }
+
+export type MetricType = "totalQuestions" | "totalScore"
 
 export default function Leaderboard() {
   const [userData, setUserData] = useState<User | null>(null)
@@ -38,7 +42,8 @@ export default function Leaderboard() {
   const firstName = userData?.user_metadata.name.split(" ")[0]
   const lastName = userData?.user_metadata.name.split(" ")[1]
   const sortedSessions = sortAllSessions(allSessionData) || []
-  const topUsers = topUsersByNumberOfQuestions(sortedSessions)
+  const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
+  const topUsersByScore = calcUsersByScore(sortedSessions)
   // console.log(sortedSessions)
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export default function Leaderboard() {
 
   function sortAllSessions(sessions: SessionType[] | null) {
     if (!sessions || sessions === null || sessions === undefined) return
-    let sortedSessions: sortedUserType[] = []
+    let sortedSessions: SortedUserType[] = []
     for (let i = 0; i <= sessions.length - 1; i++) {
       let selectedSession =
         sortedSessions.find((session) => session.userId == sessions[i].user_id) || undefined
@@ -82,30 +87,33 @@ export default function Leaderboard() {
     return sortedSessions
   }
 
-  function topUsersByNumberOfQuestions(sortedSessions: sortedUserType[] | null) {
+  function calcUsersByAmtStudied(sortedSessions: SortedUserType[] | null) {
     if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
-    let topUsers: sortedUserType[] = []
+    let topUsersByAmtStudied: SortedUserType[] = []
 
     for (let i = 0; i <= 9; i++) {
-      if (sortedSessions[i]) topUsers.push(sortedSessions[i])
+      if (sortedSessions[i]) topUsersByAmtStudied.push(sortedSessions[i])
     }
 
-    topUsers = topUsers.sort((a, b) => b.totalQuestions - a.totalQuestions)
-    return topUsers
+    topUsersByAmtStudied = topUsersByAmtStudied.sort((a, b) => b.totalQuestions - a.totalQuestions)
+    return topUsersByAmtStudied
   }
 
-  /*PLANNING SESSION - 
-So I'm going to access the real data, figure out exactly what I'm using, 
+  function calcUsersByScore(sortedSessions: SortedUserType[] | null) {
+    if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
+    let topUsersByScore: SortedUserType[] = []
 
-then I'm going to have create an object per card. I will import the userData to this Leaderboard file, I will digest it into something like an array of ojects
-In the LeaderBoardComponents, I will have a big card for each "Top 10 topic" and then each of the users in that Top 10 will be their own card (created and ued exclusively in LB_Components)
+    for (let i = 0; i <= 9; i++) {
+      if (sortedSessions[i]) topUsersByScore.push(sortedSessions[i])
+    }
 
-For topics, I'll begin with overall number of q.s answered and overall correctness, before diving into those metrics per ind. role studied for
-*/
-
-  if (loadingUser || loadingAllSessions) {
-    return <div> Loading... </div>
+    topUsersByScore = topUsersByScore.sort((a, b) => b.totalScore - a.totalScore)
+    return topUsersByScore
   }
+
+  // if (loadingUser || loadingAllSessions) {
+  //   return <div> Loading... </div>
+  // }
   return (
     <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
       <div className='text-center p-6 text-5xl '>
@@ -113,13 +121,13 @@ For topics, I'll begin with overall number of q.s answered and overall correctne
       </div>
 
       <div>
-        <div className='text-center p-4 text-2xl '>
-          <h1>Users That Have Answered The Most Questions</h1>
-        </div>
+        <h1 className='text-center p-4 text-2xl '>Top Ten Strongest Studiers</h1>
+        <LeaderboardStatCard topTenArray={topUsersByAmtStudied || []} metricType='totalQuestions' />
+      </div>
 
-        <div>
-          <LeaderboardStatCard topTenArray={topUsers || []} />
-        </div>
+      <div>
+        <h1 className='text-center p-4 text-2xl '>Top Ten Best Grades</h1>
+        <LeaderboardStatCard topTenArray={topUsersByScore || []} metricType='totalScore' />
       </div>
     </div>
   )

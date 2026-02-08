@@ -1,10 +1,9 @@
-import type { sortedUserType } from "../pages/Leaderboard"
+import type { SortedUserType, MetricType } from "../pages/Leaderboard"
 
 type IndividualUserStats = {
   name: string
   place: number
   metricNumber: number
-  metricType?: "Grade" | "Quantity Studied" // probably will delete this line
 }
 
 // type TopTenStatCard = {
@@ -13,19 +12,21 @@ type IndividualUserStats = {
 
 export default function LeaderboardStatCard({
   topTenArray,
+  metricType = "totalQuestions",
 }: {
-  topTenArray: sortedUserType[] | []
+  topTenArray: SortedUserType[] | []
+  metricType: MetricType
 }) {
   console.log(typeof topTenArray, topTenArray)
   return (
-    <div className='flex flex-col items-center pt-10'>
+    <div className='flex flex-col items-center pb-10'>
       <div className='flex flex-col bg-white/20  border-4  border-white rounded-xl'>
         {topTenArray.map((u, i) => (
           <IndividualUserStat
             key={u.userId}
             name={u.userName}
             place={i + 1}
-            metricNumber={u.totalQuestions}></IndividualUserStat>
+            metricNumber={u[metricType]}></IndividualUserStat>
         ))}
       </div>
     </div>
