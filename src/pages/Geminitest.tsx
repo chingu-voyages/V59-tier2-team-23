@@ -8,9 +8,9 @@ type Props = {
   className?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export default function Geminitest({}: // className = "",
-// ...props
-Props): JSX.Element {
+export default function Geminitest({ }: // className = "",
+  // ...props
+  Props): JSX.Element {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);

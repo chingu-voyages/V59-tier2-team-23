@@ -2,6 +2,7 @@
   {
     "role": "Scrum Product Owner",
     "focus": "Backlog management, maximizing value, stakeholder management (Aligns with CSPO)",
+    "id": 0,
     "flashcards": [
       {
         "id": 1,
@@ -68,6 +69,7 @@
   {
     "role": "Scrum Master",
     "focus": "Servant leadership, coaching, removing impediments (Aligns with CSM)",
+    "id": 1,
     "flashcards": [
       {
         "id": 6,
@@ -134,6 +136,7 @@
   {
     "role": "UI/UX Designer",
     "focus": "Accessibility, Responsiveness, Design Thinking (No code)",
+    "id": 2,
     "flashcards": [
       {
         "id": 11,
@@ -200,6 +203,7 @@
   {
     "role": "Web Developer",
     "focus": "Web fundamentals + Data Structures & Algorithms (DSA)",
+    "id": 3,
     "flashcards": [
       {
         "id": 16,
@@ -266,6 +270,7 @@
   {
     "role": "Python Developer",
     "focus": "Python syntax + Data Structures & Algorithms (DSA)",
+    "id": 4,
     "flashcards": [
       {
         "id": 21,
