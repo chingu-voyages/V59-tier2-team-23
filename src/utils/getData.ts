@@ -141,7 +141,10 @@ export async function getSessions() {
   return data;
 }
 export async function getSession(sessionId: string) {
-  const { data } = await supabase.from("sessions").select("*").eq("id", sessionId);
+  const { data } = await supabase
+    .from("sessions")
+    .select("*")
+    .eq("id", sessionId);
   console.log(`session(${sessionId})`, data);
   return data;
 }
@@ -282,7 +285,6 @@ export async function getUserInfo() {
 }
 
 //extra functions to get tables info
-
 export async function getQuestions() {
   const { data } = await supabase.from("questions").select("*");
   console.log("questions", data);
@@ -386,4 +388,36 @@ export async function getRolesWithQuestions(
   }
 
   return rolesWithQuestions;
+}
+
+//Scores
+//leader board by role
+export async function getLeaderByBoardByRole(roleId: string) {
+  const { data } = await supabase.rpc("leaderboard_by_role", {
+    role_id_input: roleId,
+  });
+  console.log(data);
+  return data;
+}
+
+//leader board global
+export async function getLeaderBoardGlobal() {
+  const { data } = await supabase.rpc("leaderboard_global");
+  console.log(data);
+  return data;
+}
+
+export async function userPercentile(
+  roleId: string,
+  score: number,
+  totalQuestions: number,
+) {
+  const { data } = await supabase.rpc("user_percentile_for_role", {
+    role_id_input: roleId,
+    user_score: score,
+    user_total_questions: totalQuestions,
+  });
+  console.log(data);
+
+  return data;
 }
