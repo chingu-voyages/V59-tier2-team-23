@@ -117,17 +117,17 @@ export default function Leaderboard() {
   // }
   return (
     <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
-      <div className='text-center p-6 text-5xl '>
+      <div className='text-center p-10 text-5xl '>
         <h1>Welcome to the Leaderboard, {firstName}!</h1>
       </div>
 
       <div>
-        <h1 className='text-center p-4 text-2xl '>Top Ten Strongest Studiers</h1>
+        <h1 className='text-center p-2 text-2xl '>Top 10 Strongest Studiers</h1>
         <LeaderboardStatCard topTenArray={topUsersByAmtStudied || []} metricType='totalQuestions' />
       </div>
 
       <div>
-        <h1 className='text-center p-4 text-2xl '>Top Ten Best Grades</h1>
+        <h1 className='text-center p-2 text-2xl '>Top 10 Best Grades</h1>
         <LeaderboardStatCard topTenArray={topUsersByGrade || []} metricType='averageGrade' />
       </div>
     </div>
