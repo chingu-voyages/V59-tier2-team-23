@@ -16,21 +16,25 @@ import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
 import EssayCard from "./EssayCard.tsx";
 import FreeResponseResults from "./FreeResponseResults.tsx";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   finishSession,
-  getRolesWithQuestions,
+  getRoleQuestions,
+  getRoleQuestionsGuest,
+  getRoles,
   startSession,
   trackUserAnswers,
+  transformToRoleQuestions,
 } from "../utils/getData.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 import Skeleton from "@mui/material/Skeleton";
 import essayQuestionsData from "../data/essayquestions.json";
+import type { DbQuestion, DbRole } from "../utils/dbTypes.ts";
 
 interface RoleSelectorProps {
-  roles: RoleQuestions[];
-  selectedRole: RoleQuestions | null;
-  onSelect: (role: RoleQuestions) => void;
+  roles: DbRole[];
+  selectedRole: DbRole | null;
+  onSelect: (role: DbRole) => void;
   onBegin: () => void;
 }
 
@@ -62,31 +66,46 @@ interface Props {
   stepInit?: AppStep;
   selectedRoleInit?: RoleQuestions;
   userAnswersInit?: UserAnswer[];
-  lastResultInit?: QuestionnaireResult
-
+  lastResultInit?: QuestionnaireResult;
 }
-export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersInit, lastResultInit }: Props) {
-  const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION");//
-  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null);//
+export default function Questionnaire({
+  stepInit,
+  selectedRoleInit,
+  userAnswersInit,
+  lastResultInit,
+}: Props) {
+  const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION"); //
+  const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null); //
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);//
+  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]); //
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
   const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
   const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(null);//
+  const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
+    null,
+  ); //
 
   useEffect(() => {
-    if (selectedRoleInit) setSelectedRole(selectedRoleInit)
-  }, [selectedRoleInit])
+    if (selectedRoleInit) {
+      setSelectedRole(selectedRoleInit);
+      setSelectedRoleInfo({
+        id: selectedRoleInit.id,
+        name: selectedRoleInit.role,
+        slug: "",
+        description: selectedRoleInit?.focus,
+        created_at: "",
+      });
+    }
+  }, [selectedRoleInit]);
   useEffect(() => {
     if (userAnswersInit) setUserAnswers(userAnswersInit);
-  }, [userAnswersInit])
+  }, [userAnswersInit]);
   useEffect(() => {
-    if (lastResultInit) setLastResult(lastResultInit)
-  }, [lastResultInit])
+    if (lastResultInit) setLastResult(lastResultInit);
+  }, [lastResultInit]);
   const { user, isGuestLogin, isAuthLoading } = useAuth();
-  const [roles, setRoles] = useState<RoleQuestions[]>([]);
+  const [roles, setRoles] = useState<DbRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<QuestionTypeOption | null>(
@@ -111,6 +130,7 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
         "Answer using multiple choice and expand with free response.",
     },
   ];
+  const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
 
   const roleQuestions: Essaycard[] = selectedRole
     ? essayQuestionsData.filter((q) => q.role === selectedRole.role)
@@ -121,9 +141,11 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
 
     async function loadRoles() {
       setIsLoading(true);
-      const data = await getRolesWithQuestions(user?.id, isGuestLogin);
-      setRoles(data);
-      if (data) setIsLoading(false);
+      const data = await getRoles();
+      if (data) {
+        setRoles(data);
+        setIsLoading(false);
+      }
     }
 
     loadRoles();
@@ -178,22 +200,23 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
 
           <div className="space-y-3">
             {roles.map((role) => {
-              const isSelected = selectedRole?.role === role.role;
+              const isSelected = selectedRole?.id === role.id;
 
               return (
                 <button
-                  key={role.role}
+                  key={role.id}
                   onClick={() => onSelect(role)}
                   className={`
                 w-full rounded-xl border p-4 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-200 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-200 hover:bg-blue-50"
+                }
               `}
                 >
-                  <h3 className="font-semibold">{role.role}</h3>
-                  <p className="text-sm text-gray-600">{role.focus}</p>
+                  <h3 className="font-semibold">{role.name}</h3>
+                  <p className="text-sm text-gray-600">{role.description}</p>
                 </button>
               );
             })}
@@ -238,10 +261,11 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
                   onClick={() => onSelect(t)}
                   className={`
                   w-full rounded-xl border p-4 text-left transition
-                  ${isSelected
+                  ${
+                    isSelected
                       ? "bg-blue-100 border-blue-500"
                       : "bg-white border-gray-200 hover:bg-blue-50"
-                    }
+                  }
                 `}
                 >
                   <h3 className="font-semibold">{t.title}</h3>
@@ -296,10 +320,11 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
                   onClick={() => onSelect(key as OptionKey)}
                   className={`
                 w-full rounded-lg border p-3 text-left transition
-                ${isSelected
-                      ? "bg-blue-100 border-blue-500"
-                      : "bg-white border-gray-300 hover:bg-blue-50"
-                    }
+                ${
+                  isSelected
+                    ? "bg-blue-100 border-blue-500"
+                    : "bg-white border-gray-300 hover:bg-blue-50"
+                }
               `}
                 >
                   <span className="font-semibold mr-2">{key}.</span>
@@ -374,9 +399,16 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
           >
             Back To Home
           </Link>
-          {user?.id && <Link to={'/history'} className='mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]'>View History</Link>}
+          {user?.id && (
+            <Link
+              to={"/history"}
+              className="mb-[1rem] h-[4rem] rounded-[0.5rem] w-full max-w-[12rem] max-h-[3.5rem] bg-[var(--color-surface)] flex items-center justify-center text-white text-[1.2rem]"
+            >
+              View History
+            </Link>
+          )}
         </div>
-      </div >
+      </div>
     );
   }
 
@@ -400,7 +432,6 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
           </h3>
 
           <div className="space-y-3">
-
             {Object.entries(question.options).map(([key, value]) => {
               const isCorrect = key === question.answer;
               const isSelected = key === userAnswer.selectedOption;
@@ -485,10 +516,24 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
     return (
       <RoleSelector
         roles={roles}
-        selectedRole={selectedRole}
-        onSelect={setSelectedRole}
-        onBegin={() => {
-          if (!selectedRole) return;
+        selectedRole={selectedRoleInfo}
+        onSelect={setSelectedRoleInfo}
+        onBegin={async () => {
+          if (!selectedRoleInfo) return;
+          let questions;
+          if (isGuestLogin) {
+            questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
+          } else if (user?.id) {
+            questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
+          }
+          if (!questions || questions.length === 0) return;
+
+          const roleWithQuestions = transformToRoleQuestions(
+            selectedRoleInfo,
+            questions as DbQuestion[],
+          );
+
+          setSelectedRole(roleWithQuestions);
 
           setCurrentIndex(0);
           setUserAnswers([]);
@@ -659,13 +704,38 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
       setLastResult({
         submitted: true,
         submittedAt: new Date().toISOString(),
-        roleId: roles.indexOf(selectedRole),
+        roleId: selectedRole.id,
         userAnswers,
-        id: uuidv4()
+        id: uuidv4(),
       });
     return (
       <Results
-        onRetry={(): void => {
+        onRetry={async (): Promise<void> => {
+          if (!selectedRoleInfo) return;
+          let questions;
+
+          if (isGuestLogin) {
+            questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
+          } else if (user?.id) {
+            questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
+          }
+          if (!questions || questions.length === 0) return;
+
+          const roleWithQuestions = transformToRoleQuestions(
+            selectedRoleInfo,
+            questions as DbQuestion[],
+          );
+          setSelectedRole(roleWithQuestions);
+
+          const session = await startSession(
+            selectedRoleInfo.id,
+            0,
+            questions.length,
+          );
+          if (session) {
+            setSessionId(session.id);
+          }
+
           setCurrentIndex(0);
           setUserAnswers([]);
           setSelectedOption(null);

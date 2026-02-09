@@ -34,6 +34,12 @@ export interface RoleQuestions {
   flashcards: Flashcard[];
 }
 
+export interface RoleInfo {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface QuestionTypeOption {
   type: QuestionType;
   title: string;
@@ -49,7 +55,7 @@ export interface UserAnswer {
 export interface QuestionnaireResult {
   submitted: boolean;
   submittedAt: string;
-  roleId: number;
+  roleId: string;
   id: string;
   userAnswers: UserAnswer[];
 }
