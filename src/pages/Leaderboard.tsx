@@ -3,8 +3,8 @@ import LeaderboardStatCard from "../components/LB_Stat_Card"
 import {
   getUserInfo,
   getSessions,
-  getAllSessionsUser,
-  getAllSessionsForRole,
+  // getAllSessionsUser,
+  // getAllSessionsForRole,
 } from "../utils/getData"
 // import { useUserData } from "../utils/fetchStats"
 import { useState, useEffect } from "react"
@@ -34,29 +34,28 @@ export type MetricType = "totalQuestions" | "totalScore"
 
 export default function Leaderboard() {
   const [userData, setUserData] = useState<User | null>(null)
-  const [loadingUser, setLoadingUser] = useState(true)
+  // const [loadingUser, setLoadingUser] = useState(true)
 
   const [allSessionData, setAllSessionData] = useState<SessionType[] | null>(null)
-  const [loadingAllSessions, setLoadingAllSessions] = useState(true)
+  // const [loadingAllSessions, setLoadingAllSessions] = useState(true)
 
   const firstName = userData?.user_metadata.name.split(" ")[0]
-  const lastName = userData?.user_metadata.name.split(" ")[1]
+  // const lastName = userData?.user_metadata.name.split(" ")[1]
   const sortedSessions = sortAllSessions(allSessionData) || []
   const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
   const topUsersByScore = calcUsersByScore(sortedSessions)
-  // console.log(sortedSessions)
 
   useEffect(() => {
     async function fetchUser() {
       const user = await getUserInfo()
       setUserData(user)
-      setLoadingUser(false)
+      // setLoadingUser(false)
     }
 
     async function fetchAllSessions() {
       const sessions = await getSessions()
       setAllSessionData(sessions)
-      setLoadingAllSessions(false)
+      // setLoadingAllSessions(false)
     }
 
     fetchUser()
