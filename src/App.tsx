@@ -1,32 +1,30 @@
-import { BrowserRouter, Routes, Route } from "react-router"
-import { Layout, Home, Fallback } from "./pages"
-import Questionnaire from "./components/Questionnaire"
-import Geminitest from "./pages/Geminitest"
-import SupabaseExamples from "./pages/SupbaseExamples"
-import { RedirectGuest } from "./components"
-import History from "./pages/History"
-import ReviewAttempt from "./pages/ReviewAttempt"
-import Leaderboard from "./pages/Leaderboard"
+import { BrowserRouter, Routes, Route } from "react-router";
+import { Layout, Home, Fallback } from "./pages";
+import Questionnaire from "./components/Questionnaire";
+import Geminitest from "./pages/Geminitest";
+import { RedirectGuest } from "./components";
+import History from "./pages/History";
+import ReviewAttempt from "./pages/ReviewAttempt";
+import Leaderboard from "./pages/Leaderboard";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} /> {/* home page is the index page */}
-          <Route path='home' element={<Home />} />
+          <Route path="home" element={<Home />} />
           <Route element={<RedirectGuest />}>
-            <Route path='geminitest' element={<Geminitest />} />
-            <Route path='supabaseexamples' element={<SupabaseExamples />} />
-            <Route path='leaderboard' element={<Leaderboard />} />
-            <Route path='roles' element={<Questionnaire />} />
-            <Route path='history' element={<History />} />
-            <Route path='history/:id' element={<ReviewAttempt />} />
+            <Route path="geminitest" element={<Geminitest />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
+            <Route path="roles" element={<Questionnaire />} />
+            <Route path="history" element={<History />} />
+            <Route path="history/:id" element={<ReviewAttempt />} />
             {/* wanted to make the path 'quiz' but we need to set the path in supabase first */}
-            <Route path='*' element={<Fallback />} />
+            <Route path="*" element={<Fallback />} />
           </Route>
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }

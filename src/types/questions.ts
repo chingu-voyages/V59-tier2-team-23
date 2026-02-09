@@ -27,18 +27,17 @@ export interface Essaycard {
   feedback: string;
 }
 
-export interface Essaycard {
-  id: number;
-  role: string;
-  question: string;
-  feedback: string;
-}
-
 export interface RoleQuestions {
   id: string;
   role: string;
   focus: string;
   flashcards: Flashcard[];
+}
+
+export interface RoleInfo {
+  id: string;
+  name: string;
+  description: string;
 }
 
 export interface QuestionTypeOption {
@@ -56,7 +55,7 @@ export interface UserAnswer {
 export interface QuestionnaireResult {
   submitted: boolean;
   submittedAt: string;
-  roleId: number;
+  roleId: string;
   id: string;
   userAnswers: UserAnswer[];
 }
