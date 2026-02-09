@@ -26,11 +26,12 @@ export type SortedUserType = {
   totalSessions: number
   totalQuestions: number
   totalScore: number
+  averageGrade: number
   role?: string
-  metricType?: "totalQuestions" | "totalScore"
+  metricType?: "totalQuestions" | "averageGrade"
 }
 
-export type MetricType = "totalQuestions" | "totalScore"
+export type MetricType = "totalQuestions" | "averageGrade"
 
 export default function Leaderboard() {
   const [userData, setUserData] = useState<User | null>(null)
@@ -43,7 +44,7 @@ export default function Leaderboard() {
   // const lastName = userData?.user_metadata.name.split(" ")[1]
   const sortedSessions = sortAllSessions(allSessionData) || []
   const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
-  const topUsersByScore = calcUsersByScore(sortedSessions)
+  const topUsersByGrade = calcUsersByGrade(sortedSessions)
 
   useEffect(() => {
     async function fetchUser() {
@@ -80,6 +81,7 @@ export default function Leaderboard() {
           totalSessions: 1,
           totalQuestions: sessions[i].total_questions,
           totalScore: sessions[i].score,
+          averageGrade: (sessions[i].score / sessions[i].total_questions) * 100,
         })
       }
     }
@@ -98,16 +100,16 @@ export default function Leaderboard() {
     return topUsersByAmtStudied
   }
 
-  function calcUsersByScore(sortedSessions: SortedUserType[] | null) {
+  function calcUsersByGrade(sortedSessions: SortedUserType[] | null) {
     if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
-    let topUsersByScore: SortedUserType[] = []
+    let topUsersByGrade: SortedUserType[] = []
 
     for (let i = 0; i <= 9; i++) {
-      if (sortedSessions[i]) topUsersByScore.push(sortedSessions[i])
+      if (sortedSessions[i]) topUsersByGrade.push(sortedSessions[i])
     }
 
-    topUsersByScore = topUsersByScore.sort((a, b) => b.totalScore - a.totalScore)
-    return topUsersByScore
+    topUsersByGrade = topUsersByGrade.sort((a, b) => b.averageGrade - a.averageGrade)
+    return topUsersByGrade
   }
 
   // if (loadingUser || loadingAllSessions) {
@@ -115,18 +117,18 @@ export default function Leaderboard() {
   // }
   return (
     <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
-      <div className='text-center p-6 text-5xl '>
+      <div className='text-center p-10 text-5xl '>
         <h1>Welcome to the Leaderboard, {firstName}!</h1>
       </div>
 
       <div>
-        <h1 className='text-center p-4 text-2xl '>Top Ten Strongest Studiers</h1>
+        <h1 className='text-center p-2 text-2xl '>Top 10 Strongest Studiers</h1>
         <LeaderboardStatCard topTenArray={topUsersByAmtStudied || []} metricType='totalQuestions' />
       </div>
 
       <div>
-        <h1 className='text-center p-4 text-2xl '>Top Ten Best Grades</h1>
-        <LeaderboardStatCard topTenArray={topUsersByScore || []} metricType='totalScore' />
+        <h1 className='text-center p-2 text-2xl '>Top 10 Best Grades</h1>
+        <LeaderboardStatCard topTenArray={topUsersByGrade || []} metricType='averageGrade' />
       </div>
     </div>
   )
