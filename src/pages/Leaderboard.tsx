@@ -3,10 +3,11 @@ import LeaderboardStatCard from "../components/LB_Stat_Card"
 import {
   getUserInfo,
   getSessions,
+  getLeaderboardData,
   // getAllSessionsUser,
   // getAllSessionsForRole,
 } from "../utils/getData"
-// import { useUserData } from "../utils/fetchStats"
+import { roundToDecimal } from "../utils/roundNum"
 import { useState, useEffect } from "react"
 
 export type SessionType = {
@@ -31,6 +32,19 @@ export type SortedUserType = {
   metricType?: "totalQuestions" | "averageGrade"
 }
 
+type LeaderboardType =
+  | {
+      user_id: any
+      user_name: any
+      score: any
+      total_questions: any
+      role_id: any
+      roles: {
+        name: any
+      }[]
+    }[]
+  | null
+
 export type MetricType = "totalQuestions" | "averageGrade"
 
 export default function Leaderboard() {
@@ -40,12 +54,13 @@ export default function Leaderboard() {
   const [allSessionData, setAllSessionData] = useState<SessionType[] | null>(null)
   const [loadingAllSessions, setLoadingAllSessions] = useState(true)
 
+  const [leaderboardData, setLeaderboardData] = useState<LeaderboardType>(null)
+
   const firstName = userData?.user_metadata.name.split(" ")[0]
   // const lastName = userData?.user_metadata.name.split(" ")[1]
   const sortedSessions = sortAllSessions(allSessionData) || []
   const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
   const topUsersByGrade = calcUsersByGrade(sortedSessions)
-  console.log("hi from the leaderboard open component")
 
   useEffect(() => {
     async function fetchUser() {
@@ -58,8 +73,15 @@ export default function Leaderboard() {
       setAllSessionData(sessions)
       setLoadingAllSessions(false)
     }
+
+    async function fetchLeaderboardData() {
+      const leaderboard = await getLeaderboardData()
+      setLeaderboardData(leaderboard)
+      console.log("leaderboard", leaderboard)
+    }
     fetchUser()
     fetchAllSessions()
+    fetchLeaderboardData()
   }, [])
 
   function sortAllSessions(sessions: SessionType[] | null) {
@@ -73,6 +95,9 @@ export default function Leaderboard() {
         selectedSession.totalSessions += 1
         selectedSession.totalQuestions += sessions[i].total_questions
         selectedSession.totalScore += sessions[i].score
+        selectedSession.averageGrade = roundToDecimal(
+          (sessions[i].score / sessions[i].total_questions) * 100,
+        )
       } else {
         sortedSessions.push({
           userId: sessions[i].user_id,
@@ -80,7 +105,7 @@ export default function Leaderboard() {
           totalSessions: 1,
           totalQuestions: sessions[i].total_questions,
           totalScore: sessions[i].score,
-          averageGrade: (sessions[i].score / sessions[i].total_questions) * 100,
+          averageGrade: roundToDecimal((sessions[i].score / sessions[i].total_questions) * 100),
         })
       }
     }
