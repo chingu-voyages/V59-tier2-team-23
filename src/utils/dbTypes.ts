@@ -16,6 +16,13 @@ export interface DbQuestion {
   answers: DbAnswer[];
 }
 
+export interface FreeDbQuestion {
+  id: string | number;
+  role_id: string;
+  question: string;
+  user_id: string | null;
+}
+
 export interface DbRole {
   id: string;
   name: string;

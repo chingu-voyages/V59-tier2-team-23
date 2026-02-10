@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { getCorrect, getGrade, type Stats } from '../../utils/results';
+import { getCorrect, type Stats } from '../../utils/results';
 
 type Props = {
     className?: string;
@@ -11,7 +11,7 @@ export default function ResultStats({ stats, className = '', ...props }: Props):
         <div className={`flex w-full max-w-32 justify-between leading-none ${className}`} {...props}>
             <div>
                 <h2 >Grade</h2>
-                <p className="text-[1.5rem] ">{getGrade(stats)}</p>
+                <p className="text-[1.5rem] ">{Math.ceil(stats.grade)}%</p>
             </div>
             <div>
                 <h2>Correct</h2>

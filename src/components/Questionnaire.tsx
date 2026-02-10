@@ -1,8 +1,63 @@
+const tempRole = {
+  id: "5e40467f-a203-41de-a006-396b45c3e7e4",
+  role: "Python Developer",
+  focus: "Develops applications using Python",
+  flashcards: [
+    {
+      id: "ef88e20a-5c45-4a0f-af49-b6410da7c6f8",
+      question: "What does the keyword def do in Python?",
+      options: {
+        A: "It defines a variable.",
+        B: "It defines a function.",
+        C: "It deletes a file.",
+        D: "It downloads a library."
+      },
+      answer: "B" as OptionKey,
+      rationale: "def function_name(): is the syntax used to create a reusable block of code called a function.",
+      answerIds: {
+        A: "19dcc643-9538-485e-8349-c2789f4b3f79",
+        B: "a8901afe-fcbc-445e-940b-56557b9feb9d",
+        C: "fae1e7a4-5328-428e-8d73-08fb4ceb3aa7",
+        D: "41fa0ded-f78d-4775-a180-c0cef0a9a34e"
+      }
+    },
+    {
+      "role_id": "Python Developer",
+      "id": 14,
+      "question": "Tell us about a time you had to optimize Python code for performance or scalability. What approach did you take?",
+      "user_id": ""
+    },
+    {
+      id: "ef88e20a-5c45-4a0f-af49-b6410da7c6f8",
+      question: "What does the keyword def do in Python?",
+      options: {
+        A: "It defines a variable.",
+        B: "It defines a function.",
+        C: "It deletes a file.",
+        D: "It downloads a library."
+      },
+      answer: "B" as OptionKey,
+      rationale: "def function_name(): is the syntax used to create a reusable block of code called a function.",
+      answerIds: {
+        A: "19dcc643-9538-485e-8349-c2789f4b3f79",
+        B: "a8901afe-fcbc-445e-940b-56557b9feb9d",
+        C: "fae1e7a4-5328-428e-8d73-08fb4ceb3aa7",
+        D: "41fa0ded-f78d-4775-a180-c0cef0a9a34e"
+      }
+    },
+    {
+      "role_id": "Python Developer",
+      "id": 15,
+      "question": "How do you use testing, debugging, and error handling in your Python development workflow?",
+      "user_id": ""
+    },
+  ],
+}
+
 import { useState, type JSX, useEffect } from "react";
 import type {
   RoleQuestions,
   Flashcard,
-  Essaycard,
   UserAnswer,
   OptionKey,
   QuestionnaireResult,
@@ -15,7 +70,6 @@ import ResultStats from "./results/ResultStats.tsx";
 import ResultsGrid from "./results/ResultsGrid.tsx";
 import { Link } from "react-router-dom";
 import EssayCard from "./EssayCard.tsx";
-import FreeResponseResults from "./FreeResponseResults.tsx";
 import { v4 as uuidv4 } from "uuid";
 import {
   finishSession,
@@ -24,12 +78,11 @@ import {
   getRoles,
   startSession,
   trackUserAnswers,
-  transformToRoleQuestions,
 } from "../utils/getData.ts";
 import { useAuth } from "../context/AuthContext.tsx";
 import Skeleton from "@mui/material/Skeleton";
 import essayQuestionsData from "../data/essayquestions.json";
-import type { DbQuestion, DbRole } from "../utils/dbTypes.ts";
+import type { DbRole, FreeDbQuestion } from "../utils/dbTypes.ts";
 
 interface RoleSelectorProps {
   roles: DbRole[];
@@ -48,8 +101,8 @@ interface QuestionCardProps {
 }
 
 interface FeedbackProps {
-  question: Flashcard;
-  userAnswer: UserAnswer;
+  question: Flashcard | FreeDbQuestion;
+  userAnswer: UserAnswer | FreeResponseAnswer;
   onNext: () => void;
   onPrev: () => void;
   current: number;
@@ -77,10 +130,10 @@ export default function Questionnaire({
   const [step, setStep] = useState<AppStep>(stepInit || "ROLE_SELECTION"); //
   const [selectedRole, setSelectedRole] = useState<RoleQuestions | null>(null); //
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]); //
+  const [userAnswers, setUserAnswers] = useState<(UserAnswer | FreeResponseAnswer)[]>([]); //
   const [selectedOption, setSelectedOption] = useState<OptionKey | null>(null);
-  const [lastQuestion, setLastQuestion] = useState<Flashcard | null>(null);
-  const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | null>(null);
+  const [lastQuestion, setLastQuestion] = useState<Flashcard | FreeDbQuestion | null>(null);
+  const [lastUserAnswer, setLastUserAnswer] = useState<UserAnswer | FreeResponseAnswer | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
     null,
@@ -111,7 +164,7 @@ export default function Questionnaire({
   const [selectedType, setSelectedType] = useState<QuestionTypeOption | null>(
     null,
   );
-  const [freeResponses, setFreeResponses] = useState<FreeResponseAnswer[]>([]);
+
   const QUESTION_TYPES: QuestionTypeOption[] = [
     {
       type: "FREE_RESPONSE",
@@ -132,10 +185,10 @@ export default function Questionnaire({
   ];
   const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
 
-  const roleQuestions: Essaycard[] = selectedRole
-    ? essayQuestionsData.filter((q) => q.role === selectedRole.role)
+  let roleQuestions: FreeDbQuestion[] = selectedRole
+    ? essayQuestionsData.filter((q) => q.role_id === selectedRole.id)
     : [];
-
+  roleQuestions = essayQuestionsData.slice(13);
   useEffect(() => {
     if (isAuthLoading) return;
 
@@ -208,11 +261,10 @@ export default function Questionnaire({
                   onClick={() => onSelect(role)}
                   className={`
                 w-full rounded-xl border p-4 text-left transition
-                ${
-                  isSelected
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white border-gray-200 hover:bg-blue-50"
-                }
+                ${isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-200 hover:bg-blue-50"
+                    }
               `}
                 >
                   <h3 className="font-semibold">{role.name}</h3>
@@ -261,11 +313,10 @@ export default function Questionnaire({
                   onClick={() => onSelect(t)}
                   className={`
                   w-full rounded-xl border p-4 text-left transition
-                  ${
-                    isSelected
+                  ${isSelected
                       ? "bg-blue-100 border-blue-500"
                       : "bg-white border-gray-200 hover:bg-blue-50"
-                  }
+                    }
                 `}
                 >
                   <h3 className="font-semibold">{t.title}</h3>
@@ -320,11 +371,10 @@ export default function Questionnaire({
                   onClick={() => onSelect(key as OptionKey)}
                   className={`
                 w-full rounded-lg border p-3 text-left transition
-                ${
-                  isSelected
-                    ? "bg-blue-100 border-blue-500"
-                    : "bg-white border-gray-300 hover:bg-blue-50"
-                }
+                ${isSelected
+                      ? "bg-blue-100 border-blue-500"
+                      : "bg-white border-gray-300 hover:bg-blue-50"
+                    }
               `}
                 >
                   <span className="font-semibold mr-2">{key}.</span>
@@ -353,7 +403,7 @@ export default function Questionnaire({
   type ResultProps = {
     className?: string;
     result: QuestionnaireResult;
-    onReview: (answer: UserAnswer, index: number) => void;
+    onReview: (answer: UserAnswer | FreeResponseAnswer, index: number) => void;
     onRetry: () => void;
   } & React.HTMLAttributes<HTMLDivElement>;
 
@@ -427,38 +477,61 @@ export default function Questionnaire({
             Question <span className="font-semibold">{current}</span> /{" "}
             <span className="font-semibold">{total}</span>
           </div>
-          <h3 className="text-lg font-semibold text-center">
-            {question.question}
-          </h3>
+          {typeof userAnswer.correct == 'boolean' && ("options" in question) && (<>
+            <h3 className="text-lg font-semibold text-center">
+              {question.question}
+            </h3>
+            <div className="space-y-3">
+              {Object.entries(question.options).map(([key, value]) => {
+                const isCorrect = key === question.answer;
+                const isSelected = key === userAnswer.selectedOption;
 
-          <div className="space-y-3">
-            {Object.entries(question.options).map(([key, value]) => {
-              const isCorrect = key === question.answer;
-              const isSelected = key === userAnswer.selectedOption;
+                let styles = "border-gray-300 bg-white";
 
-              let styles = "border-gray-300 bg-white";
+                if (isCorrect) {
+                  styles = "border-green-500 bg-green-100";
+                } else if (isSelected && !userAnswer.correct) {
+                  styles = "border-red-500 bg-red-100";
+                }
 
-              if (isCorrect) {
-                styles = "border-green-500 bg-green-100";
-              } else if (isSelected && !userAnswer.correct) {
-                styles = "border-red-500 bg-red-100";
-              }
+                return (
+                  <div
+                    key={key}
+                    className={`w-full rounded-lg border p-3 ${styles}`}
+                  >
+                    <span className="font-semibold mr-2">{key}.</span>
+                    {value}
+                  </div>
+                );
+              })}
+            </div>
 
-              return (
-                <div
-                  key={key}
-                  className={`w-full rounded-lg border p-3 ${styles}`}
-                >
-                  <span className="font-semibold mr-2">{key}.</span>
-                  {value}
+            <p className="text-sm text-gray-700">
+              <strong>Reasoning:</strong> {question.rationale}
+            </p></>)
+          }
+          {typeof userAnswer.correct == 'number' && (<>
+            <div key={userAnswer.id} className="bg-white rounded-xl shadow p-6 space-y-4">
+              <p className="text-lg font-semibold text-gray-900">{userAnswer.question}</p>
+              <div>
+                <div className="text-sm font-semibold text-gray-700 mb-1">
+                  Your Response
                 </div>
-              );
-            })}
-          </div>
+                <p className="rounded-lg border border-gray-300 p-3 bg-gray-50 text-sm whitespace-pre-wrap">
+                  {userAnswer.response}
+                </p>
+              </div>
 
-          <p className="text-sm text-gray-700">
-            <strong>Reasoning:</strong> {question.rationale}
-          </p>
+              <div className={`rounded-lg ${userAnswer.correct <= 50 && "bg-red-50 text-red-800 "} ${userAnswer.correct > 50 && userAnswer.correct < 70 && 'bg-yellow-50 text-yellow-800 '} ${userAnswer.correct >= 70 && 'bg-green-50 text-green-800 '} p-4`}>
+                <div className="font-semibold mb-1">
+                  AI Feedback  {userAnswer.correct / 10}/10
+                </div>
+                <p className="text-sm ">{userAnswer.feedback}</p>
+              </div>
+            </div>
+
+          </>)
+          }
           <div className="flex flex-col gap-[0.5rem]">
             <div className="flex gap-[0.5rem]">
               {submitted && (
@@ -528,10 +601,7 @@ export default function Questionnaire({
           }
           if (!questions || questions.length === 0) return;
 
-          const roleWithQuestions = transformToRoleQuestions(
-            selectedRoleInfo,
-            questions as DbQuestion[],
-          );
+          const roleWithQuestions = tempRole
 
           setSelectedRole(roleWithQuestions);
 
@@ -554,7 +624,7 @@ export default function Questionnaire({
           setCurrentIndex(0);
           setUserAnswers([]);
           if (selectedType.type === "FREE_RESPONSE") {
-            setStep("FR_QUESTION");
+            setStep("QUESTION"); // here fetch the open-ended questions and include them in the selectedRole object
           }
           if (selectedType.type === "MULTIPLE_CHOICE") {
             const session = await startSession(
@@ -565,10 +635,10 @@ export default function Questionnaire({
             if (session) {
               setSessionId(session.id);
             }
-            setStep("MC_QUESTION");
+            setStep("QUESTION");// here fetch the MC questions and include them in the selectedRole object
           }
           if (selectedType.type === "BOTH") {
-            setStep("BOTH_QUESTION");
+            setStep("QUESTION");// here fetch the a mix of questions and include them in the selectedRole object
           }
         }}
       />
@@ -578,18 +648,19 @@ export default function Questionnaire({
   if (!selectedRole) return null;
 
   const totalQuestions = selectedRole.flashcards.length;
-  const currentQuestion = selectedRole.flashcards[currentIndex];
+  const currentQuestion: Flashcard | FreeDbQuestion = selectedRole.flashcards[currentIndex];
 
-  if (step === "MC_QUESTION") {
-    return (
+
+  if (step === "QUESTION") {
+    if ("options" in currentQuestion) return (
       <QuestionCard
-        question={currentQuestion}
+        question={currentQuestion as Flashcard}
         selectedOption={selectedOption}
         current={currentIndex + 1}
         total={totalQuestions}
         onSelect={setSelectedOption}
         onSubmit={async () => {
-          if (!selectedOption) return;
+          if (!selectedOption || !("answer" in currentQuestion)) return;
 
           const correct = selectedOption === currentQuestion.answer;
           if (sessionId) {
@@ -617,30 +688,28 @@ export default function Questionnaire({
         }}
       />
     );
-  }
-  if (step === "FR_QUESTION") {
-    return (
-      <EssayCard
-        questions={roleQuestions}
-        onSubmitAll={(answers) => {
-          setFreeResponses(answers);
-          setStep("FR_RESULTS");
-        }}
-      />
-    );
+    else return (<EssayCard
+      userAnswers={userAnswers}
+      currentIndex={currentIndex}
+      setCurrentIndex={setCurrentIndex}
+      selectedRole={selectedRole}
+      setUserAnswers={setUserAnswers}
+      questions={roleQuestions}
+      onSubmitAll={(answers) => {
+        setLastResult({
+          submitted: true,
+          submittedAt: new Date().toISOString(),
+          roleId: selectedRole.id,
+          userAnswers: answers,
+          id: uuidv4(),
+        });
+        setStep("RESULTS"); /////////////////////////////////////////////////////////////////
+      }}
+    />);
+
   }
 
-  if (step === "BOTH_QUESTION") {
-    return (
-      <EssayCard
-        questions={roleQuestions}
-        onSubmitAll={(answers) => {
-          setFreeResponses(answers);
-          setStep("MC_QUESTION");
-        }}
-      />
-    );
-  }
+
 
   if (step === "FEEDBACK" && lastQuestion && lastUserAnswer) {
     return (
@@ -648,13 +717,13 @@ export default function Questionnaire({
         question={lastQuestion}
         userAnswer={lastUserAnswer}
         current={currentIndex + 1}
-        total={totalQuestions}
+        total={selectedRole.flashcards.length || totalQuestions}
         onNext={() => {
           const nextIndex = currentIndex + 1;
 
           if (nextIndex < selectedRole.flashcards.length && !submitted) {
             setCurrentIndex(nextIndex);
-            setStep("MC_QUESTION");
+            setStep("QUESTION");
           } else if (nextIndex < selectedRole.flashcards.length && submitted) {
             setCurrentIndex(nextIndex);
             setLastUserAnswer(userAnswers[nextIndex]);
@@ -675,22 +744,6 @@ export default function Questionnaire({
     );
   }
 
-  if (step === "FR_RESULTS") {
-    return (
-      <FreeResponseResults
-        responses={freeResponses}
-        onBack={() => {
-          // Decide where to go next
-          if (selectedType?.type === "BOTH") {
-            setCurrentIndex(0);
-            setStep("MC_QUESTION");
-          } else {
-            setStep("ROLE_SELECTION");
-          }
-        }}
-      />
-    );
-  }
 
   if (step === "RESULTS") {
     if (!submitted) {
@@ -721,10 +774,11 @@ export default function Questionnaire({
           }
           if (!questions || questions.length === 0) return;
 
-          const roleWithQuestions = transformToRoleQuestions(
-            selectedRoleInfo,
-            questions as DbQuestion[],
-          );
+          // const roleWithQuestions = transformToRoleQuestions(
+          //   selectedRoleInfo,
+          //   questions as DbQuestion[],
+          // );
+          const roleWithQuestions = tempRole;
           setSelectedRole(roleWithQuestions);
 
           const session = await startSession(
@@ -743,9 +797,9 @@ export default function Questionnaire({
           setLastUserAnswer(null);
           setSubmitted(false);
           setLastResult(null);
-          setStep("MC_QUESTION");
+          setStep("QUESTION");
         }}
-        onReview={(answer: UserAnswer, index: number) => {
+        onReview={(answer: UserAnswer | FreeResponseAnswer, index: number) => {
           const question = selectedRole.flashcards[index];
           setLastQuestion(question);
           setLastUserAnswer(answer);

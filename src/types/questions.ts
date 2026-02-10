@@ -1,3 +1,5 @@
+import type { FreeDbQuestion } from "../utils/dbTypes";
+
 export type OptionKey = "A" | "B" | "C" | "D";
 
 export type AppStep =
@@ -8,7 +10,8 @@ export type AppStep =
   | "BOTH_QUESTION"
   | "FEEDBACK"
   | "RESULTS"
-  | "FR_RESULTS";
+  | "FR_RESULTS"
+  | "QUESTION";
 
 export type QuestionType = "FREE_RESPONSE" | "MULTIPLE_CHOICE" | "BOTH";
 
@@ -31,7 +34,7 @@ export interface RoleQuestions {
   id: string;
   role: string;
   focus: string;
-  flashcards: Flashcard[];
+  flashcards: (Flashcard | FreeDbQuestion)[];
 }
 
 export interface RoleInfo {
@@ -57,14 +60,16 @@ export interface QuestionnaireResult {
   submittedAt: string;
   roleId: string;
   id: string;
-  userAnswers: UserAnswer[];
+  userAnswers: (UserAnswer | FreeResponseAnswer)[];
 }
 
 export type FreeResponseAnswer = {
-  id: number;
+  id: number | string;
+  FQid: number | string;
   question: string;
   response: string;
   feedback: string;
+  correct: number;
 };
 
 export const QUESTION_TYPES: QuestionTypeOption[] = [

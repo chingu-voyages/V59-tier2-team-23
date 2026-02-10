@@ -1,4 +1,4 @@
-import type { DbQuestion, DbRole } from "./dbTypes";
+import type { DbQuestion, DbRole, FreeDbQuestion } from "./dbTypes";
 import type { Flashcard, RoleQuestions, OptionKey } from "../types/questions";
 import { supabase } from "./supabase";
 
@@ -290,42 +290,45 @@ export async function getUserAnswers() {
 }
 
 //Data transformers
-export function transformToFlashcard(dbQuestion: DbQuestion): Flashcard {
-  const sortedAnswers = [...dbQuestion.answers].sort(
-    (a, b) => a.display_order - b.display_order,
-  );
+export function transformToFlashcard(dbQuestion: DbQuestion | FreeDbQuestion): Flashcard | FreeDbQuestion {
+  if (!("answers" in dbQuestion)) return dbQuestion;
+  else {
+    const sortedAnswers = [...dbQuestion.answers].sort(
+      (a, b) => a.display_order - b.display_order,
+    );
 
-  const OptionKeys: OptionKey[] = ["A", "B", "C", "D"];
-  const options: Record<OptionKey, string> = {
-    A: sortedAnswers[0]?.answer || "",
-    B: sortedAnswers[1]?.answer || "",
-    C: sortedAnswers[2]?.answer || "",
-    D: sortedAnswers[3]?.answer || "",
-  };
+    const OptionKeys: OptionKey[] = ["A", "B", "C", "D"];
+    const options: Record<OptionKey, string> = {
+      A: sortedAnswers[0]?.answer || "",
+      B: sortedAnswers[1]?.answer || "",
+      C: sortedAnswers[2]?.answer || "",
+      D: sortedAnswers[3]?.answer || "",
+    };
 
-  const answerIds: Record<OptionKey, string> = {
-    A: sortedAnswers[0]?.id || "",
-    B: sortedAnswers[1]?.id || "",
-    C: sortedAnswers[2]?.id || "",
-    D: sortedAnswers[3]?.id || "",
-  };
+    const answerIds: Record<OptionKey, string> = {
+      A: sortedAnswers[0]?.id || "",
+      B: sortedAnswers[1]?.id || "",
+      C: sortedAnswers[2]?.id || "",
+      D: sortedAnswers[3]?.id || "",
+    };
 
-  const correctAnswerIndex = sortedAnswers.findIndex((a) => a.is_correct);
-  const correctAnswerKey = OptionKeys[correctAnswerIndex] || "A";
+    const correctAnswerIndex = sortedAnswers.findIndex((a) => a.is_correct);
+    const correctAnswerKey = OptionKeys[correctAnswerIndex] || "A";
 
-  return {
-    id: dbQuestion.id,
-    question: dbQuestion.question,
-    options,
-    answer: correctAnswerKey,
-    rationale: dbQuestion.rationale || "",
-    answerIds,
-  };
+    return {
+      id: dbQuestion.id,
+      question: dbQuestion.question,
+      options,
+      answer: correctAnswerKey,
+      rationale: dbQuestion.rationale || "",
+      answerIds,
+    };
+  }
 }
 
 export function transformToRoleQuestions(
   role: DbRole,
-  questions: DbQuestion[],
+  questions: (DbQuestion | FreeDbQuestion)[],
 ): RoleQuestions {
   return {
     id: role.id,
