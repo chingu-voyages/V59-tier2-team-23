@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { Essaycard } from "../types/questions.ts";
+import { handleGenerateFreeResponse } from "./FreeResponseAI.tsx";
+import { generateEssayFeedback } from "./FreeResponseFeedback.tsx";
 
 interface EssayCardProps {
   questions: Essaycard[];
@@ -13,12 +15,10 @@ interface EssayCardProps {
   ) => void;
 }
 
-const exampleFeedback = () =>
-  "This is placeholder feedback. Your response demonstrates thoughtful reflection and relevant experience.";
-
 export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [response, setResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState<
@@ -30,26 +30,38 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
     }[]
   >([]);
 
+  const newData = handleGenerateFreeResponse(questions[0]?.role);
+
+  console.log(newData);
+
   const currentQuestion = questions[currentIndex];
 
-  const handleSubmit = () => {
-    const fb = exampleFeedback();
+  const handleSubmit = async () => {
+    setIsLoading(true);
 
-    const answer = {
-      id: currentQuestion.id,
-      question: currentQuestion.question,
-      response,
-      feedback: fb,
-    };
+    try {
+      const fb = await generateEssayFeedback(
+        currentQuestion.role,
+        currentQuestion.question,
+        response,
+      );
 
-    setFeedback(fb);
-    setSubmitted(true);
+      const answer = {
+        id: currentQuestion.id,
+        question: currentQuestion.question,
+        response,
+        feedback: fb,
+      };
 
-    setAnswers((prev) => {
-      const updated = [...prev, answer];
+      setFeedback(fb);
+      setSubmitted(true);
 
-      return updated;
-    });
+      setAnswers((prev) => [...prev, answer]);
+    } catch (error) {
+      console.error("Error generating feedback:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleNext = () => {
@@ -96,6 +108,15 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
           placeholder="Type your response here..."
           className="w-full min-h-[140px] rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:bg-gray-100"
         />
+
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center text-xs text-white text-center">
+            <h2 className="text-black text-lg mb-8">
+              Asking Gemini for feedback
+            </h2>
+            <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin"></div>
+          </div>
+        ) : null}
 
         {!submitted ? (
           <button

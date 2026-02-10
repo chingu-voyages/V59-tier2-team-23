@@ -29,6 +29,7 @@ import {
 import { useAuth } from "../context/AuthContext.tsx";
 import Skeleton from "@mui/material/Skeleton";
 import essayQuestionsData from "../data/essayquestions.json";
+import { handleGenerateFreeResponse } from "./FreeResponseAI.tsx";
 import type { DbQuestion, DbRole } from "../utils/dbTypes.ts";
 
 interface RoleSelectorProps {
@@ -85,6 +86,10 @@ export default function Questionnaire({
   const [lastResult, setLastResult] = useState<QuestionnaireResult | null>(
     null,
   ); //
+  const [generatedEssayQuestions, setGeneratedEssayQuestions] = useState<
+    Essaycard[]
+  >([]);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (selectedRoleInit) {
@@ -132,9 +137,10 @@ export default function Questionnaire({
   ];
   const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
 
-  const roleQuestions: Essaycard[] = selectedRole
-    ? essayQuestionsData.filter((q) => q.role === selectedRole.role)
-    : [];
+  const roleQuestions =
+    generatedEssayQuestions.length > 0
+      ? generatedEssayQuestions
+      : essayQuestionsData.filter((q) => q.role === selectedRole?.role);
 
   useEffect(() => {
     if (isAuthLoading) return;
@@ -150,6 +156,20 @@ export default function Questionnaire({
 
     loadRoles();
   }, [user, isGuestLogin, isAuthLoading]);
+
+  useEffect(() => {
+    const exampleRole = "Web Developer";
+
+    const newData = handleGenerateFreeResponse(exampleRole);
+
+    console.log(newData);
+  }, []);
+
+  // const exampleRole = "Web Developer";
+
+  // const newData = handleGenerateFreeResponse(exampleRole);
+
+  // console.log(newData);
 
   if (isLoading || isAuthLoading)
     return (
@@ -186,6 +206,15 @@ export default function Questionnaire({
         />
       </div>
     );
+
+  if (isGenerating) {
+    return (
+      <div className="h-1000 flex flex-col items-center justify-center text-xs text-white text-center">
+        <h2 className="text-black text-lg mb-8">Generating Questions</h2>
+        <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin"></div>
+      </div>
+    );
+  }
 
   function RoleSelector({
     roles,
@@ -553,6 +582,25 @@ export default function Questionnaire({
           if (!selectedType || !selectedRole) return;
           setCurrentIndex(0);
           setUserAnswers([]);
+          if (
+            selectedType.type === "FREE_RESPONSE" ||
+            selectedType.type === "BOTH"
+          ) {
+            setIsGenerating(true);
+
+            try {
+              const aiQuestions = await handleGenerateFreeResponse(
+                selectedRole.role,
+              );
+              setGeneratedEssayQuestions(aiQuestions);
+              console.log(generatedEssayQuestions);
+              setStep("FR_QUESTION");
+            } catch (e) {
+              console.error(e);
+            } finally {
+              setIsGenerating(false);
+            }
+          }
           if (selectedType.type === "FREE_RESPONSE") {
             setStep("FR_QUESTION");
           }
@@ -579,6 +627,8 @@ export default function Questionnaire({
 
   const totalQuestions = selectedRole.flashcards.length;
   const currentQuestion = selectedRole.flashcards[currentIndex];
+
+  console.log(generatedEssayQuestions);
 
   if (step === "MC_QUESTION") {
     return (
