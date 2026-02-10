@@ -43,7 +43,7 @@ export default function FreeResponseResults({
         {onBack && (
           <button
             onClick={onBack}
-            className="w-full max-w-sm mx-auto block rounded-lg bg-blue-600 py-3 text-white font-semibold hover:bg-indigo-700 transition"
+            className="w-full max-w-sm mx-auto block rounded-lg bg-blue-600 py-3 text-white font-semibold hover:bg-blue-700 transition"
           >
             Back
           </button>
