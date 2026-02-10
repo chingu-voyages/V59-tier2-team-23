@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { Layout, Home, Fallback } from "./pages";
 import Questionnaire from "./components/Questionnaire";
 import Geminitest from "./pages/Geminitest";
-import SupabaseExamples from "./pages/SupbaseExamples";
 import { RedirectGuest } from "./components";
 import History from "./pages/History";
 import ReviewAttempt from "./pages/ReviewAttempt";
+import Leaderboard from "./pages/Leaderboard";
 
 export default function App() {
   return (
@@ -16,7 +16,7 @@ export default function App() {
           <Route path="home" element={<Home />} />
           <Route element={<RedirectGuest />}>
             <Route path="geminitest" element={<Geminitest />} />
-            <Route path="supabaseexamples" element={<SupabaseExamples />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="roles" element={<Questionnaire />} />
             <Route path="history" element={<History />} />
             <Route path="history/:id" element={<ReviewAttempt />} />
@@ -25,6 +25,6 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter >
+    </BrowserRouter>
   );
 }

@@ -5,12 +5,10 @@ import { supabase } from "./supabase";
 //get all roles
 export async function getRoles() {
   const { data } = await supabase.from("roles").select("*");
-  console.log("roles data", data);
   return data;
 }
 export async function getRole(roleId: string) {
   const { data } = await supabase.from("roles").select("*").eq("id", roleId);
-  console.log(`role(${roleId}) data`, data);
   return data;
 }
 
@@ -21,7 +19,6 @@ export async function getRoleQuestions(selectedRoleId: string, userId: string) {
     .select("*, answers(*)")
     .eq("role_id", selectedRoleId)
     .or(`user_id.is.null,user_id.eq.${userId}`);
-  console.log("selected role login user questions", data);
   return data;
 }
 
@@ -32,7 +29,6 @@ export async function getRoleQuestionsGuest(selectedRoleId: string) {
     .select("*, answers(*)")
     .eq("role_id", selectedRoleId)
     .is("user_id", null);
-  console.log("selected role questions guest", data);
   return data;
 }
 
@@ -42,14 +38,12 @@ export async function startSession(
   score: number,
   totalQuestions: number,
 ) {
-  //you need to be login so you can get the user
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  console.log("Authenticated user info", user);
-  console.log(user?.user_metadata.name);
+
   if (user) {
-    const fName = user?.user_metadata.name.split(" ")[0] || "user";
+    const fName = user?.user_metadata?.name?.split(" ")[0] || "user";
     const { data } = await supabase
       .from("sessions")
       .insert({
@@ -61,8 +55,6 @@ export async function startSession(
       })
       .select()
       .single();
-
-    console.log("Current session data", data);
     return data;
   }
 }
@@ -96,7 +88,7 @@ export async function finishSession(correctAnswers: number, sessionId: string) {
     .eq("id", sessionId)
     .select()
     .single();
-  console.log(data);
+  return data;
 }
 
 //gets users stats for leader dashboard get sessions for all users////
@@ -107,7 +99,6 @@ export async function getAllSessionsForRole(roleId: string) {
     .select("user_id, score, total_questions, completed_at, user_name")
     .eq("role_id", roleId)
     .not("completed_at", "is", null);
-  console.log("get all session for role", data);
 
   return data;
 }
@@ -116,33 +107,32 @@ export async function getAllSessionsForRole(roleId: string) {
 export async function getLeaderboardData() {
   const { data } = await supabase
     .from("sessions")
-    .select("user_id, user_name, score, total_questions, role_id roles(name)")
+    .select("user_id, user_name, score, total_questions, role_id, roles(name)")
     .not("completed_at", "is", null);
-  console.log(data);
+
   return data;
 }
 
 //get one user session history
 export async function getAllSessionsUser(userId: string) {
-  console.log(userId);
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("sessions")
     .select("*, roles(name)")
     .eq("user_id", userId)
     .order("started_at", { ascending: false });
-  console.log(error);
-  console.log("user sessions", data);
+
   return data;
 }
 
 export async function getSessions() {
   const { data } = await supabase.from("sessions").select("*");
-  console.log("sessions", data);
   return data;
 }
 export async function getSession(sessionId: string) {
-  const { data } = await supabase.from("sessions").select("*").eq("id", sessionId);
-  console.log(`session(${sessionId})`, data);
+  const { data } = await supabase
+    .from("sessions")
+    .select("*")
+    .eq("id", sessionId);
   return data;
 }
 //get cuurent active session
@@ -282,16 +272,13 @@ export async function getUserInfo() {
 }
 
 //extra functions to get tables info
-
 export async function getQuestions() {
   const { data } = await supabase.from("questions").select("*");
-  console.log("questions", data);
   return data;
 }
 
 export async function getAnswers() {
   const { data } = await supabase.from("answers").select("*");
-  console.log("answers", data);
   return data;
 }
 
@@ -386,4 +373,33 @@ export async function getRolesWithQuestions(
   }
 
   return rolesWithQuestions;
+}
+
+//Scores
+//leader board by role
+export async function getLeaderByBoardByRole(roleId: string) {
+  const { data } = await supabase.rpc("leaderboard_by_role", {
+    role_id_input: roleId,
+  });
+  return data;
+}
+
+//leader board global
+export async function getLeaderBoardGlobal() {
+  const { data } = await supabase.rpc("leaderboard_global");
+  return data;
+}
+
+export async function userPercentile(
+  roleId: string,
+  score: number,
+  totalQuestions: number,
+) {
+  const { data } = await supabase.rpc("user_percentile_for_role", {
+    role_id_input: roleId,
+    user_score: score,
+    user_total_questions: totalQuestions,
+  });
+
+  return data;
 }
