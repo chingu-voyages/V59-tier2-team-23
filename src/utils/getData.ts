@@ -63,6 +63,25 @@ export async function trackUserAnswers(
   selectedOption: "A" | "B" | "C" | "D",
   isCorrect: boolean,
 ) {
+  // const payload = {
+  //   question_id: questionId,
+  //   session_id: sessionId,
+  //   answer_id: answerId,
+  //   selected_option: selectedOption,
+  //   is_correct: isCorrect,
+  // };
+
+  // console.log("trackUserAnswers payload:", payload);
+
+  // const { data, error } = await supabase
+  //   .from("user_answers")
+  //   .insert(payload)
+  //   .select();
+
+  // console.log("trackUserAnswers response:", { data, error });
+
+  // if (error) throw error;
+  // return data;
   const { data } = await supabase
     .from("user_answers")
     .insert({
