@@ -35,30 +35,29 @@ export type MetricType = "totalQuestions" | "averageGrade"
 
 export default function Leaderboard() {
   const [userData, setUserData] = useState<User | null>(null)
-  // const [loadingUser, setLoadingUser] = useState(true)
+  const [loadingUser, setLoadingUser] = useState(true)
 
   const [allSessionData, setAllSessionData] = useState<SessionType[] | null>(null)
-  // const [loadingAllSessions, setLoadingAllSessions] = useState(true)
+  const [loadingAllSessions, setLoadingAllSessions] = useState(true)
 
   const firstName = userData?.user_metadata.name.split(" ")[0]
   // const lastName = userData?.user_metadata.name.split(" ")[1]
   const sortedSessions = sortAllSessions(allSessionData) || []
   const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
   const topUsersByGrade = calcUsersByGrade(sortedSessions)
+  console.log("hi from the leaderboard open component")
 
   useEffect(() => {
     async function fetchUser() {
       const user = await getUserInfo()
       setUserData(user)
-      // setLoadingUser(false)
+      setLoadingUser(false)
     }
-
     async function fetchAllSessions() {
       const sessions = await getSessions()
       setAllSessionData(sessions)
-      // setLoadingAllSessions(false)
+      setLoadingAllSessions(false)
     }
-
     fetchUser()
     fetchAllSessions()
   }, [])
@@ -85,6 +84,7 @@ export default function Leaderboard() {
         })
       }
     }
+    console.log("SORTED SESSIONS", sortedSessions)
     return sortedSessions
   }
 
@@ -102,19 +102,21 @@ export default function Leaderboard() {
 
   function calcUsersByGrade(sortedSessions: SortedUserType[] | null) {
     if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
+    let sortUsersByGrade: SortedUserType[] = []
     let topUsersByGrade: SortedUserType[] = []
 
-    for (let i = 0; i <= 9; i++) {
-      if (sortedSessions[i]) topUsersByGrade.push(sortedSessions[i])
+    for (let i = 0; i <= sortedSessions.length - 1; i++) {
+      if (sortedSessions[i]) sortUsersByGrade.push(sortedSessions[i])
     }
 
-    topUsersByGrade = topUsersByGrade.sort((a, b) => b.averageGrade - a.averageGrade)
+    sortUsersByGrade = sortUsersByGrade.sort((a, b) => b.averageGrade - a.averageGrade)
+    topUsersByGrade = sortUsersByGrade.slice(0, 10)
     return topUsersByGrade
   }
 
-  // if (loadingUser || loadingAllSessions) {
-  //   return <div> Loading... </div>
-  // }
+  if (loadingUser || loadingAllSessions) {
+    return <div> Loading... </div>
+  }
   return (
     <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
       <div className='text-center p-10 text-5xl '>
