@@ -330,12 +330,14 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
     result: QuestionnaireResult;
     onReview: (answer: UserAnswer, index: number) => void;
     onRetry: () => void;
+    onRetryWithNewQuestions: () => void;
   } & React.HTMLAttributes<HTMLDivElement>;
 
   function Results({
     className = "",
     result,
     onRetry,
+    onRetryWithNewQuestions,
     onReview,
     ...props
   }: ResultProps): JSX.Element {
@@ -358,7 +360,7 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
             Retry
           </button>
           <button
-            // onClick={}
+            onClick={onRetryWithNewQuestions}
             className="h-[2.2rem] rounded-[0.3rem] bg-(--color-surface) px-3 text-white"
           >
             Retry With New Questions
@@ -687,6 +689,16 @@ export default function Questionnaire({ stepInit, selectedRoleInit, userAnswersI
           setLastUserAnswer(answer);
           setCurrentIndex(index);
           setStep("FEEDBACK");
+        }}
+        onRetryWithNewQuestions={(): void => {
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          setSelectedOption(null);
+          setLastQuestion(null);
+          setLastUserAnswer(null);
+          setSubmitted(false);
+          setLastResult(null);
+          setStep("MC_QUESTION");
         }}
         result={lastResult!}
       />
