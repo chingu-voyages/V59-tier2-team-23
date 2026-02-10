@@ -30,6 +30,7 @@ import { useAuth } from "../context/AuthContext.tsx";
 import Skeleton from "@mui/material/Skeleton";
 import essayQuestionsData from "../data/essayquestions.json";
 import type { DbQuestion, DbRole } from "../utils/dbTypes.ts";
+import fetchNewQuestionsForRetry from "./NewQuestionsForRetry.tsx";
 
 interface RoleSelectorProps {
   roles: DbRole[];
@@ -760,7 +761,18 @@ export default function Questionnaire({
           setCurrentIndex(index);
           setStep("FEEDBACK");
         }}
-        onRetryWithNewQuestions={(): void => {
+        onRetryWithNewQuestions={async(): Promise<void> => {
+          if(!selectedRoleInfo) return;
+
+          const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
+          if (!aiQuestions || aiQuestions.length === 0) return;
+
+          const roleWithQuestions = transformToRoleQuestions(selectedRoleInfo, aiQuestions);
+          setSelectedRole(roleWithQuestions);
+
+          const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
+          if (session) setSessionId(session.id);
+
           setCurrentIndex(0);
           setUserAnswers([]);
           setSelectedOption(null);
