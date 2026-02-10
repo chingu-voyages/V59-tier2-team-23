@@ -2,12 +2,11 @@ import { type User } from "@supabase/supabase-js"
 import LeaderboardStatCard from "../components/LB_Stat_Card"
 import {
   getUserInfo,
-  getSessions,
-  getLeaderboardData,
+  // getLeaderboardData,
+  getLeaderBoardGlobal,
   // getAllSessionsUser,
   // getAllSessionsForRole,
 } from "../utils/getData"
-import { roundToDecimal } from "../utils/roundNum"
 import { useState, useEffect } from "react"
 
 export type SessionType = {
@@ -22,45 +21,40 @@ export type SessionType = {
 }
 
 export type SortedUserType = {
-  userId: string
-  userName: string
-  totalSessions: number
-  totalQuestions: number
-  totalScore: number
-  averageGrade: number
+  user_id: string
+  user_name: string
+  total_sessions: number
+  total_questions: number
+  total_score: number
+  average_grade: number
   role?: string
-  metricType?: "totalQuestions" | "averageGrade"
+  metric_type?: "total_questions" | "average_grade"
 }
 
 type LeaderboardType =
   | {
-      user_id: any
-      user_name: any
-      score: any
-      total_questions: any
-      role_id: any
-      roles: {
-        name: any
-      }[]
+      average_grade: number
+      total_questions: number
+      total_score: number
+      total_sessions: number
+      user_id: string
+      user_name: string
     }[]
   | null
 
-export type MetricType = "totalQuestions" | "averageGrade"
+export type MetricType = "total_questions" | "average_grade"
 
 export default function Leaderboard() {
   const [userData, setUserData] = useState<User | null>(null)
   const [loadingUser, setLoadingUser] = useState(true)
 
-  const [allSessionData, setAllSessionData] = useState<SessionType[] | null>(null)
-  const [loadingAllSessions, setLoadingAllSessions] = useState(true)
-
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardType>(null)
+  const [loadingLeaderboardData, setLoadingLeaderboardData] = useState(true)
 
   const firstName = userData?.user_metadata.name.split(" ")[0]
-  // const lastName = userData?.user_metadata.name.split(" ")[1]
-  const sortedSessions = sortAllSessions(allSessionData) || []
-  const topUsersByAmtStudied = calcUsersByAmtStudied(sortedSessions)
-  const topUsersByGrade = calcUsersByGrade(sortedSessions)
+
+  const topUsersByAmtStudied = calcUsersByAmtStudied(leaderboardData)
+  const topUsersByGrade = calcUsersByGrade(leaderboardData)
 
   useEffect(() => {
     async function fetchUser() {
@@ -68,78 +62,48 @@ export default function Leaderboard() {
       setUserData(user)
       setLoadingUser(false)
     }
-    async function fetchAllSessions() {
-      const sessions = await getSessions()
-      setAllSessionData(sessions)
-      setLoadingAllSessions(false)
-    }
 
     async function fetchLeaderboardData() {
-      const leaderboard = await getLeaderboardData()
+      const leaderboard = await getLeaderBoardGlobal()
       setLeaderboardData(leaderboard)
+      setLoadingLeaderboardData(false)
       console.log("leaderboard", leaderboard)
     }
     fetchUser()
-    fetchAllSessions()
     fetchLeaderboardData()
   }, [])
 
-  function sortAllSessions(sessions: SessionType[] | null) {
-    if (!sessions || sessions === null || sessions === undefined) return
-    let sortedSessions: SortedUserType[] = []
-    for (let i = 0; i <= sessions.length - 1; i++) {
-      let selectedSession =
-        sortedSessions.find((session) => session.userId == sessions[i].user_id) || undefined
+  function calcUsersByAmtStudied(leaderboard: LeaderboardType) {
+    if (leaderboard === null || leaderboard == undefined || !leaderboard) return
+    let sortUsersByAmtStudied: LeaderboardType = []
+    let topUsersByAmtStudied: LeaderboardType = []
 
-      if (selectedSession) {
-        selectedSession.totalSessions += 1
-        selectedSession.totalQuestions += sessions[i].total_questions
-        selectedSession.totalScore += sessions[i].score
-        selectedSession.averageGrade = roundToDecimal(
-          (sessions[i].score / sessions[i].total_questions) * 100,
-        )
-      } else {
-        sortedSessions.push({
-          userId: sessions[i].user_id,
-          userName: sessions[i].user_name,
-          totalSessions: 1,
-          totalQuestions: sessions[i].total_questions,
-          totalScore: sessions[i].score,
-          averageGrade: roundToDecimal((sessions[i].score / sessions[i].total_questions) * 100),
-        })
-      }
-    }
-    console.log("SORTED SESSIONS", sortedSessions)
-    return sortedSessions
-  }
-
-  function calcUsersByAmtStudied(sortedSessions: SortedUserType[] | null) {
-    if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
-    let topUsersByAmtStudied: SortedUserType[] = []
-
-    for (let i = 0; i <= 9; i++) {
-      if (sortedSessions[i]) topUsersByAmtStudied.push(sortedSessions[i])
+    for (let i = 0; i <= leaderboard.length - 1; i++) {
+      if (leaderboard[i]) sortUsersByAmtStudied.push(leaderboard[i])
     }
 
-    topUsersByAmtStudied = topUsersByAmtStudied.sort((a, b) => b.totalQuestions - a.totalQuestions)
+    sortUsersByAmtStudied = sortUsersByAmtStudied.sort(
+      (a, b) => b.total_questions - a.total_questions,
+    )
+    topUsersByAmtStudied = sortUsersByAmtStudied.slice(0, 10)
     return topUsersByAmtStudied
   }
 
-  function calcUsersByGrade(sortedSessions: SortedUserType[] | null) {
-    if (sortedSessions === null || sortedSessions == undefined || !sortedSessions) return
-    let sortUsersByGrade: SortedUserType[] = []
-    let topUsersByGrade: SortedUserType[] = []
+  function calcUsersByGrade(leaderboard: LeaderboardType) {
+    if (leaderboard === null || leaderboard == undefined || !leaderboard) return
+    let sortUsersByGrade: LeaderboardType = []
+    let topUsersByGrade: LeaderboardType = []
 
-    for (let i = 0; i <= sortedSessions.length - 1; i++) {
-      if (sortedSessions[i]) sortUsersByGrade.push(sortedSessions[i])
+    for (let i = 0; i <= leaderboard.length - 1; i++) {
+      if (leaderboard[i]) sortUsersByGrade.push(leaderboard[i])
     }
 
-    sortUsersByGrade = sortUsersByGrade.sort((a, b) => b.averageGrade - a.averageGrade)
+    sortUsersByGrade = sortUsersByGrade.sort((a, b) => b.average_grade - a.average_grade)
     topUsersByGrade = sortUsersByGrade.slice(0, 10)
     return topUsersByGrade
   }
 
-  if (loadingUser || loadingAllSessions) {
+  if (loadingUser || loadingLeaderboardData) {
     return <div> Loading... </div>
   }
   return (
@@ -150,12 +114,15 @@ export default function Leaderboard() {
 
       <div>
         <h1 className='text-center p-2 text-2xl '>Top 10 Strongest Studiers</h1>
-        <LeaderboardStatCard topTenArray={topUsersByAmtStudied || []} metricType='totalQuestions' />
+        <LeaderboardStatCard
+          topTenArray={topUsersByAmtStudied || []}
+          metricType='total_questions'
+        />
       </div>
 
       <div>
         <h1 className='text-center p-2 text-2xl '>Top 10 Best Grades</h1>
-        <LeaderboardStatCard topTenArray={topUsersByGrade || []} metricType='averageGrade' />
+        <LeaderboardStatCard topTenArray={topUsersByGrade || []} metricType='average_grade' />
       </div>
     </div>
   )

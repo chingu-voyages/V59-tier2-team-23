@@ -6,21 +6,17 @@ type IndividualUserStats = {
   metricNumber: number
 }
 
-// type TopTenStatCard = {
-//   users: IndividualUserStats[]
-// }
-
 export default function LeaderboardStatCard({
   topTenArray,
-  metricType = "totalQuestions",
+  metricType = "total_questions",
 }: {
   topTenArray: SortedUserType[] | []
   metricType: MetricType
 }) {
   let labelMetric = ""
-  if (metricType === "totalQuestions") {
+  if (metricType === "total_questions") {
     labelMetric = "Number of Questions"
-  } else if (metricType === "averageGrade") {
+  } else if (metricType === "average_grade") {
     labelMetric = "User's Average Grade"
   }
   return (
@@ -33,8 +29,8 @@ export default function LeaderboardStatCard({
       <div className='flex flex-col bg-white/20  border-4  border-white rounded-xl'>
         {topTenArray.map((u, i) => (
           <IndividualUserStat
-            key={u.userId}
-            name={u.userName}
+            key={u.user_id}
+            name={u.user_name}
             place={i + 1}
             metricNumber={u[metricType]}></IndividualUserStat>
         ))}
