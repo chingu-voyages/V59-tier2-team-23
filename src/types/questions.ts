@@ -67,6 +67,13 @@ export type FreeResponseAnswer = {
   feedback: string;
 };
 
+export interface GeneratedEssayQuestion {
+  role: string;
+  id: number;
+  question: string;
+  feedback: string;
+}
+
 export const QUESTION_TYPES: QuestionTypeOption[] = [
   {
     type: "FREE_RESPONSE",
