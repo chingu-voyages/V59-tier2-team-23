@@ -824,8 +824,16 @@ export default function Questionnaire({
             questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
           } else if (user?.id) {
             setIsAddingQuestion(true);
-            await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, 1);
-            //show a spinner or loader to avoid double click while creating question
+            try {
+              await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, 1);
+            } catch (error: unknown) {
+              console.log("error creating ai questions", error);
+              //Display Alert message with MUI?
+              alert("Error creating ai questions");
+            } finally {
+              setIsAddingQuestion(false);
+            }
+
             questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
           }
           if (!questions || questions.length === 0) return;
@@ -834,7 +842,7 @@ export default function Questionnaire({
             selectedRoleInfo,
             questions as DbQuestion[],
           );
-          setIsAddingQuestion(false);
+
           setSelectedRole(roleWithQuestions);
 
           const session = await startSession(

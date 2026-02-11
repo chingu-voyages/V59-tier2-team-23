@@ -224,9 +224,8 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
     choiceD,
     correctAnswer,
   } = aiQuestions;
-  console.log(aiQuestions);
 
-  const { data: newQuestion } = await supabase
+  const { data: newQuestion, error: questionError } = await supabase
     .from("questions")
     .insert({
       user_id: userId,
@@ -238,11 +237,13 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
     })
     .select()
     .single();
-  console.log(newQuestion);
 
-  if (!newQuestion) return null;
+  if (questionError || !newQuestion) {
+    console.log("Error saving questions");
+    return null;
+  }
 
-  await supabase.from("answers").insert([
+  const { error: answersError } = await supabase.from("answers").insert([
     {
       question_id: newQuestion.id,
       answer: choiceA,
@@ -269,6 +270,9 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
     },
   ]);
 
+  if (answersError) {
+    console.log("Error saving answers");
+  }
   return newQuestion;
 }
 //save one ai generated questions with answers

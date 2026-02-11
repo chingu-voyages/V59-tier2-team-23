@@ -14,6 +14,11 @@ export default async function fetchNewQuestionsForRetry(
     .replace(/```\s*/gi, "")
     .trim()
     .replace(/^\d+\.\s*/, "");
-  const obj = JSON.parse(cleanedResult);
-  await saveAiQuestions({ ...obj, userId, roleId: role.id });
+  const parsedArray = JSON.parse(cleanedResult);
+  const questionsArray = Array.isArray(parsedArray)
+    ? parsedArray
+    : [parsedArray];
+  for (const questionObject of questionsArray) {
+    await saveAiQuestions({ ...questionObject, userId, roleId: role.id });
+  }
 }
