@@ -22,6 +22,7 @@ import {
   getRoleQuestions,
   getRoleQuestionsGuest,
   getRoles,
+  saveAiQuestions,
   startSession,
   trackUserAnswers,
   transformToRoleQuestions,
@@ -137,6 +138,7 @@ export default function Questionnaire({
     },
   ];
   const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
+  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
 
   const roleQuestions =
     generatedEssayQuestions.length > 0
@@ -417,8 +419,11 @@ export default function Questionnaire({
           <button
             onClick={onRetryWithNewQuestions}
             className="h-[2.2rem] rounded-[0.3rem] bg-(--color-surface) px-3 text-white"
+            disabled={isAddingQuestion}
           >
-            Retry With New Questions
+            {isAddingQuestion
+              ? "Creating Question..."
+              : "Retry With New Questions"}
           </button>
         </div>
         <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
@@ -811,17 +816,35 @@ export default function Questionnaire({
           setCurrentIndex(index);
           setStep("FEEDBACK");
         }}
-        onRetryWithNewQuestions={async(): Promise<void> => {
-          if(!selectedRoleInfo) return;
+        onRetryWithNewQuestions={async (): Promise<void> => {
+          if (!selectedRoleInfo) return;
+          let questions;
 
-          const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
-          if (!aiQuestions || aiQuestions.length === 0) return;
+          if (isGuestLogin) {
+            questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
+          } else if (user?.id) {
+            setIsAddingQuestion(true);
+            await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, 1);
+            //show a spinner or loader to avoid double click while creating question
+            questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
+          }
+          if (!questions || questions.length === 0) return;
 
-          const roleWithQuestions = transformToRoleQuestions(selectedRoleInfo, aiQuestions);
+          const roleWithQuestions = transformToRoleQuestions(
+            selectedRoleInfo,
+            questions as DbQuestion[],
+          );
+          setIsAddingQuestion(false);
           setSelectedRole(roleWithQuestions);
 
-          const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
-          if (session) setSessionId(session.id);
+          const session = await startSession(
+            selectedRoleInfo.id,
+            0,
+            questions.length,
+          );
+          if (session) {
+            setSessionId(session.id);
+          }
 
           setCurrentIndex(0);
           setUserAnswers([]);
