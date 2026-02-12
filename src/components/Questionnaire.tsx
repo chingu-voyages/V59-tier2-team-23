@@ -31,6 +31,7 @@ import Skeleton from "@mui/material/Skeleton";
 import essayQuestionsData from "../data/essayquestions.json";
 import { handleGenerateFreeResponse } from "./FreeResponseAI.tsx";
 import type { DbQuestion, DbRole } from "../utils/dbTypes.ts";
+import fetchNewQuestionsForRetry from "./NewQuestionsForRetry.tsx";
 
 interface RoleSelectorProps {
   roles: DbRole[];
@@ -136,6 +137,7 @@ export default function Questionnaire({
     },
   ];
   const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
+  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
 
   const roleQuestions =
     generatedEssayQuestions.length > 0
@@ -384,12 +386,14 @@ export default function Questionnaire({
     result: QuestionnaireResult;
     onReview: (answer: UserAnswer, index: number) => void;
     onRetry: () => void;
+    onRetryWithNewQuestions: () => void;
   } & React.HTMLAttributes<HTMLDivElement>;
 
   function Results({
     className = "",
     result,
     onRetry,
+    onRetryWithNewQuestions,
     onReview,
     ...props
   }: ResultProps): JSX.Element {
@@ -403,13 +407,22 @@ export default function Questionnaire({
         <h1 className="text-[1.5rem] text-center  mb-[1rem]">
           {selectedRole?.role} prep results
         </h1>
-        <div className="flex items-end justify-between w-full max-w-[15rem] mb-[1rem] gap-[0.5rem]">
+        <div className="flex items-end justify-between w-full max-w-115 mb-[1rem] gap-[0.5rem]">
           <ResultStats stats={stats} />
           <button
             onClick={onRetry}
             className="h-[2.2rem] rounded-[0.3rem] aspect-5/2 bg-[var(--color-surface)] text-white"
           >
             Retry
+          </button>
+          <button
+            onClick={onRetryWithNewQuestions}
+            className="h-[2.2rem] rounded-[0.3rem] bg-(--color-surface) px-3 text-white"
+            disabled={isAddingQuestion}
+          >
+            {isAddingQuestion
+              ? "Creating Question..."
+              : "Retry With More Questions"}
           </button>
         </div>
         <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
@@ -801,6 +814,61 @@ export default function Questionnaire({
           setLastUserAnswer(answer);
           setCurrentIndex(index);
           setStep("FEEDBACK");
+        }}
+        onRetryWithNewQuestions={async(): Promise<void> => {
+          if(!selectedRoleInfo) return;
+          let questions;
+
+          if (isGuestLogin) {
+            questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
+          } else if (user?.id) {
+            setIsAddingQuestion(true);
+            try {
+            await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
+            } catch (error: unknown) {
+              console.log("Error creating AI questions", error);
+              //Alert display
+              alert("Error creating AI questions");
+            } finally {
+              setIsAddingQuestion(false);
+            }
+            console.log("back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx");
+            questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
+          }
+
+          if (!questions || questions.length === 0) return;
+
+          const roleWithQuestions = transformToRoleQuestions(
+            selectedRoleInfo,
+            questions as DbQuestion[],
+          );
+          // const roleWithQuestions = transformToRoleQuestions(
+          // selectedRoleInfo, 
+          // aiQuestions
+          // );
+          setIsAddingQuestion(false);
+          setSelectedRole(roleWithQuestions);
+
+          // const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
+          // if (!aiQuestions || aiQuestions.length === 0) return;
+
+          setSelectedRole(roleWithQuestions);
+          const session = await startSession(
+            selectedRoleInfo.id,
+            5,
+            questions.length,
+          );
+          // const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
+          if (session) setSessionId(session.id);
+
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          setSelectedOption(null);
+          setLastQuestion(null);
+          setLastUserAnswer(null);
+          setSubmitted(false);
+          setLastResult(null);
+          setStep("MC_QUESTION");
         }}
         result={lastResult!}
       />

@@ -1,12 +1,5 @@
-// import type { JSX } from "react";
-// import { useState, useRef, useEffect } from "react";
 import { geminiModel } from "../components/Geminifunction";
-import existingQuestions from "../data/questions.json";
-
-// type Props = {
-//   selectedRole: string;
-//   className?: string;
-// } & React.HTMLAttributes<HTMLDivElement>;
+// import existingQuestions from "../data/questions.json";
 
 export async function handleGenerateMoreQuestions(selectedRole: string) {
   const prompt = `
@@ -22,8 +15,18 @@ Input:
 * [ ] I want to create a list of practice questions for the ${selectedRole} role to help me practice for face-to-face interviews with prospective employers
 
 Additional Context:
-* Here are existing questions already in my library:
-${JSON.stringify(existingQuestions, null, 2)}
+* generate this shape. maybe for the 2 properties empty strings to change later? {
+  userId: string,       // we get this from Supabase, not from Gemini or Context
+  roleId: string,       // we get this from the selected role, not from Gemini
+
+  question: string,     // the actual question text
+  rationale: string,    // explanation of why the correct answer is correct
+  choiceA: string,      // first option
+  choiceB: string,      // second option
+  choiceC: string,      // third option
+  choiceD: string,      // fourth option
+  correctAnswer: string // this needs to be exactly "A", "B", "C", or "D"
+}
 
 Constraints:
 
@@ -34,14 +37,38 @@ Constraints:
 * [ ] If the role is Scrum Product Owner, the questions should also be helpful for passing the CSPO certification test
 * [ ] If the role is Web Developer or Python Developer, some of the generated questions should be about data structures and algorithms
 * [ ] If the role is UI/UX Designer, the questions should not include questions that are specific to HTML, CSS, or programming languages. They should stress UI/UX concepts and practices, like general UI design, responsiveness, and accessibility.
-* [ ] Generate exactly 5 new questions - no more, no less.
+* [ ] Generate exactly 1 new questions - no more, no less.
 
 Format:
 
-* [ ] Produce exactly 5 flashcards, numbered 1 through 5.
 * [ ] Do not include any preamble, introduction, or explanation - only the list of questions.
+
+
 `;
 
+// * Here are existing questions already in my library:
+// ${JSON.stringify(existingQuestions, null, 2)}
+
+// * [ ] Produce exactly 1 flashcards, numbered 1 
+// * [ ] Do not include any preamble, introduction, or explanation - only the list of questions.
+// * [ ] Return ONLY a valid JSON array of objects.
+// * [ ] Each object must have these exact fields: question, rationale, choiceA, choiceB, choiceC, choiceD, correctAnswer.
+// * [ ] correctAnswer must be one of: "A", "B", "C", or "D".
+// * [ ] Do NOT include any markdown code blocks, backticks, or text before/after the JSON.
+// * [ ] Example format:
+// [
+//   {
+//     "question": "What is...",
+//     "rationale": "Because...",
+//     "choiceA": "Option A",
+//     "choiceB": "Option B",
+//     "choiceC": "Option C",
+//     "choiceD": "Option D",
+//     "correctAnswer": "A"
+//   }
+// ]
+  console.log("Prompt sent to Gemini in MoreQuestions.tsx:");
   const result = await geminiModel.generateContent(prompt);
+  console.log(result);
   return result.response.text();
 }
