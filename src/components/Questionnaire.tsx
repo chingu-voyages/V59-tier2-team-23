@@ -137,6 +137,7 @@ export default function Questionnaire({
     },
   ];
   const [selectedRoleInfo, setSelectedRoleInfo] = useState<DbRole | null>(null);
+  const [isAddingQuestion, setIsAddingQuestion] = useState(false);
 
   const roleQuestions =
     generatedEssayQuestions.length > 0
@@ -417,8 +418,11 @@ export default function Questionnaire({
           <button
             onClick={onRetryWithNewQuestions}
             className="h-[2.2rem] rounded-[0.3rem] bg-(--color-surface) px-3 text-white"
+            disabled={isAddingQuestion}
           >
-            Retry With New Questions
+            {isAddingQuestion
+              ? "Creating Question..."
+              : "Retry With More Questions"}
           </button>
         </div>
         <div className="mb-[0.5rem] sm:mb-[1.5rem] ">
@@ -813,14 +817,48 @@ export default function Questionnaire({
         }}
         onRetryWithNewQuestions={async(): Promise<void> => {
           if(!selectedRoleInfo) return;
+          let questions;
 
-          const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
-          if (!aiQuestions || aiQuestions.length === 0) return;
+          if (isGuestLogin) {
+            questions = await getRoleQuestionsGuest(selectedRoleInfo.id);
+          } else if (user?.id) {
+            setIsAddingQuestion(true);
+            try {
+            await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
+            } catch (error: unknown) {
+              console.log("Error creating AI questions", error);
+              //Alert display
+              alert("Error creating AI questions");
+            } finally {
+              setIsAddingQuestion(false);
+            }
+            console.log("back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx");
+            questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
+          }
 
-          const roleWithQuestions = transformToRoleQuestions(selectedRoleInfo, aiQuestions);
+          if (!questions || questions.length === 0) return;
+
+          const roleWithQuestions = transformToRoleQuestions(
+            selectedRoleInfo,
+            questions as DbQuestion[],
+          );
+          // const roleWithQuestions = transformToRoleQuestions(
+          // selectedRoleInfo, 
+          // aiQuestions
+          // );
+          setIsAddingQuestion(false);
           setSelectedRole(roleWithQuestions);
 
-          const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
+          // const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
+          // if (!aiQuestions || aiQuestions.length === 0) return;
+
+          setSelectedRole(roleWithQuestions);
+          const session = await startSession(
+            selectedRoleInfo.id,
+            5,
+            questions.length,
+          );
+          // const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
           if (session) setSessionId(session.id);
 
           setCurrentIndex(0);

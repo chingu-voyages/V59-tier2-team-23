@@ -206,10 +206,19 @@ interface AiQuestions {
   correctAnswer: string
 }
 export async function saveAiQuestions(aiQuestions: AiQuestions) {
-  const { userId, roleId, question, rationale, choiceA, choiceB, choiceC, choiceD, correctAnswer } =
-    aiQuestions
+  const { 
+    userId, 
+    roleId, 
+    question, 
+    rationale, 
+    choiceA, 
+    choiceB, 
+    choiceC, 
+    choiceD, 
+    correctAnswer 
+  } = aiQuestions;
 
-  const { data: newQuestion } = await supabase
+  const { data: newQuestion, error: questionError } = await supabase
     .from("questions")
     .insert({
       user_id: userId,
@@ -220,11 +229,14 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       source: "user_generated",
     })
     .select()
-    .single()
+    .single();
 
-  if (!newQuestion) return null
+  if (questionError || !newQuestion) {
+    console.log("Error saving questions")
+    return null;
+  }
 
-  await supabase.from("answers").insert([
+  const { error: answersError } = await supabase.from("answers").insert([
     {
       question_id: newQuestion.id,
       answer: choiceA,
@@ -249,7 +261,12 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
       is_correct: correctAnswer === "D",
       display_order: 4,
     },
-  ])
+  ]);
+
+  if (answersError) {
+    console.log("Error saving answers");
+    return null;
+  }
 
   return newQuestion
 }
