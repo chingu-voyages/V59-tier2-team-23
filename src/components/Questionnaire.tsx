@@ -167,11 +167,16 @@ export default function Questionnaire({
     console.log(newData);
   }, []);
 
-  // const exampleRole = "Web Developer";
-
-  // const newData = handleGenerateFreeResponse(exampleRole);
-
-  // console.log(newData);
+  useEffect(() => {
+    if (step !== "RESULTS" || submitted) return;
+    setSubmitted(true);
+    const correctCount = userAnswers.filter((answer) => answer.correct).length;
+    if (sessionId) {
+      finishSession(correctCount, sessionId!)
+        .then(() => console.log("session completed"))
+        .catch((error) => console.log("session no save", error));
+    }
+  }, [step, submitted, userAnswers, sessionId]);
 
   if (isLoading || isAuthLoading)
     return (
@@ -815,8 +820,8 @@ export default function Questionnaire({
           setCurrentIndex(index);
           setStep("FEEDBACK");
         }}
-        onRetryWithNewQuestions={async(): Promise<void> => {
-          if(!selectedRoleInfo) return;
+        onRetryWithNewQuestions={async (): Promise<void> => {
+          if (!selectedRoleInfo) return;
           let questions;
 
           if (isGuestLogin) {
@@ -824,7 +829,7 @@ export default function Questionnaire({
           } else if (user?.id) {
             setIsAddingQuestion(true);
             try {
-            await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
+              await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
             } catch (error: unknown) {
               console.log("Error creating AI questions", error);
               //Alert display
@@ -832,7 +837,9 @@ export default function Questionnaire({
             } finally {
               setIsAddingQuestion(false);
             }
-            console.log("back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx");
+            console.log(
+              "back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx",
+            );
             questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
           }
 
@@ -842,23 +849,14 @@ export default function Questionnaire({
             selectedRoleInfo,
             questions as DbQuestion[],
           );
-          // const roleWithQuestions = transformToRoleQuestions(
-          // selectedRoleInfo, 
-          // aiQuestions
-          // );
-          setIsAddingQuestion(false);
-          setSelectedRole(roleWithQuestions);
-
-          // const aiQuestions = await fetchNewQuestionsForRetry(selectedRoleInfo, user?.id, selectedRole?.flashcards.length || 5);
-          // if (!aiQuestions || aiQuestions.length === 0) return;
 
           setSelectedRole(roleWithQuestions);
           const session = await startSession(
             selectedRoleInfo.id,
-            5,
+            0,
             questions.length,
           );
-          // const session = await startSession(selectedRoleInfo.id, 0, aiQuestions.length);
+
           if (session) setSessionId(session.id);
 
           setCurrentIndex(0);
