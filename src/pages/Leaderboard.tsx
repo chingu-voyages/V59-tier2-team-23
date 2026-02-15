@@ -58,7 +58,7 @@ export default function Leaderboard() {
 
   const [roleData, setRoleData] = useState<any[] | null>(null)
 
-  const [userPercentileData, setUserPercentileData] = useState<number | null>(null)
+  // const [userPercentileData, setUserPercentileData] = useState<number | null>(null)
   const [roleLeaderboards, setRoleLeaderboards] = useState<any[]>([])
   const [sortedLeaderboards, setSortedLeaderboards] = useState<LeaderboardType[][]>([])
 
@@ -114,16 +114,16 @@ export default function Leaderboard() {
       setLoadingLeaderboardData(false)
     }
 
-    async function getUserPercentileByRole(roleId: string, score: number, totalQuestions: number) {
-      const userPercentileStat = await userPercentile(roleId, score, totalQuestions)
-      setUserPercentileData(userPercentileStat)
-    }
+    // async function getUserPercentileByRole(roleId: string, score: number, totalQuestions: number) {
+    //   const userPercentileStat = await userPercentile(roleId, score, totalQuestions)
+    //   setUserPercentileData(userPercentileStat)
+    // }
 
     fetchUser()
     fetchRoles()
     fetchLeaderboardData()
     /// placeholder percentile
-    getUserPercentileByRole("12258174-d9a6-458c-8b61-2c2f469dfd1c", 10, 50)
+    // getUserPercentileByRole("12258174-d9a6-458c-8b61-2c2f469dfd1c", 10, 50)
   }, [])
 
   useEffect(() => {
