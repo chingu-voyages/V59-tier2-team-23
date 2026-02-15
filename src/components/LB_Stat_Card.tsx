@@ -22,8 +22,8 @@ export default function LeaderboardStatCard({
   return (
     <div className='flex flex-col items-center pb-10'>
       <div className='flex relative w-100 pt-1.5 pb-1.5    '>
-        <div className='font-bold   left-0 pl-2'> User </div>
-        <div className='font-bold absolute right-2'> {labelMetric} </div>
+        <div className='  left-0 pl-2'> User </div>
+        <div className=' absolute right-2'> {labelMetric} </div>
       </div>
 
       <div className='flex flex-col bg-white/20  border-4  border-white rounded-xl'>
