@@ -4,7 +4,7 @@ import {
   getUserInfo,
   getLeaderBoardGlobal,
   getLeaderByBoardByRole,
-  userPercentile,
+  // userPercentile,
   getRoles,
 } from "../utils/getData"
 import { useState, useEffect } from "react"
