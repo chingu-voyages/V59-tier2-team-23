@@ -20,6 +20,7 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [score, setScore] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState<
     {
@@ -36,6 +37,14 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
 
   const currentQuestion = questions[currentIndex];
 
+  const getScoreColor = (s: string) => {
+    if (s === "1/" || s === "2/" || s === "3/") return "text-red-600";
+    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-400";
+    if (s === "7/" || s === "8/" || s === "9/" || s === "10")
+      return "text-green-600";
+    return "text-gray-500";
+  };
+
   const handleSubmit = async () => {
     setIsLoading(true);
 
@@ -45,6 +54,12 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
         currentQuestion.question,
         response,
       );
+
+      const responseScore = fb.slice(7, 9);
+
+      setScore(responseScore);
+
+      console.log(score);
 
       const answer = {
         id: currentQuestion.id,
@@ -111,10 +126,10 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center text-xs text-white text-center">
-            <h2 className="text-black text-lg mb-8">
-              Asking Gemini for feedback
+            <h2 className="text-black text-[16px] font-semibold mb-6">
+              Asking Gemini for Feedback
             </h2>
-            <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin"></div>
+            <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin mb-6"></div>
           </div>
         ) : null}
 
@@ -128,9 +143,11 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
           </button>
         ) : (
           <div className="space-y-4">
-            <div className="rounded-lg bg-blue-50 p-4 text-blue-800">
-              <div className="font-semibold mb-1">AI Feedback</div>
-              <p className="text-sm">{feedback}</p>
+            <div className="rounded-lg p-4 text-blue-800">
+              <div className="font-semibold mb-1">Gemini Feedback</div>
+              <p className={`font-semibold text-sm ${getScoreColor(score)}`}>
+                {feedback}
+              </p>
             </div>
 
             <button

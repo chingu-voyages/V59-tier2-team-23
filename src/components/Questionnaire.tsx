@@ -217,7 +217,9 @@ export default function Questionnaire({
   if (isGenerating) {
     return (
       <div className="h-1000 flex flex-col items-center justify-center text-xs text-white text-center">
-        <h2 className="text-black text-lg mb-8">Generating Questions</h2>
+        <h2 className="text-black text-[20px] font-semibold mb-8">
+          Gemini Is Generating Questions for You
+        </h2>
         <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin"></div>
       </div>
     );

@@ -9,6 +9,14 @@ export default function FreeResponseResults({
   responses,
   onBack,
 }: FreeResponseResultsProps) {
+  const getScoreColor = (s: string) => {
+    if (s === "1/" || s === "2/" || s === "3/") return "text-red-600";
+    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-400";
+    if (s === "7/" || s === "8/" || s === "9/" || s === "10")
+      return "text-green-600";
+    return "text-gray-500";
+  };
+
   return (
     <div className="h-1000 bg-gray-50 px-4 py-8 flex justify-center">
       <div className="w-full max-w-3xl space-y-6">
@@ -31,11 +39,15 @@ export default function FreeResponseResults({
               </p>
             </div>
 
-            <div className="rounded-lg bg-blue-50 p-4">
+            <div className="rounded-lg p-4">
               <div className="font-semibold text-blue-800 mb-1">
-                AI Feedback
+                Gemini Feedback
               </div>
-              <p className="text-sm text-blue-800">{r.feedback}</p>
+              <p
+                className={`font-semibold text-sm ${getScoreColor(r.feedback.slice(7, 9))}`}
+              >
+                {r.feedback}
+              </p>
             </div>
           </div>
         ))}
