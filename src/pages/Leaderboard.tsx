@@ -196,7 +196,7 @@ export default function Leaderboard() {
     return <div> Loading... </div>
   }
   return (
-    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 fluid-page-padding '>
+    <div className='flex flex-col items-center pb-25 fluid-page-padding '>
       <div className='text-center  text-5xl '>
         <h1>Welcome to the Leaderboard, {firstName}!</h1>
       </div>
