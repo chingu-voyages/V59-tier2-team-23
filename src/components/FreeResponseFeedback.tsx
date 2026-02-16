@@ -13,11 +13,11 @@ Question: ${question}
 User Answer: ${answer}
 
 Give concise, constructive feedback:
-- What was good
+- Give a score on a scale of 1 to 10, written like Score: */10
 - What could improve
 - One concrete suggestion
 
-Plain text only.
+Plain text only. No markdown-style formatting.
 `;
 
   const result = await geminiModel.generateContent(prompt);

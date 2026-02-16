@@ -212,7 +212,9 @@ export default function Questionnaire({
   if (isGenerating) {
     return (
       <div className="h-1000 flex flex-col items-center justify-center text-xs text-white text-center">
-        <h2 className="text-black text-lg mb-8">Generating Questions</h2>
+        <h2 className="text-black text-[20px] font-semibold mb-8">
+          Gemini Is Generating Questions for You
+        </h2>
         <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin"></div>
       </div>
     );
@@ -815,8 +817,8 @@ export default function Questionnaire({
           setCurrentIndex(index);
           setStep("FEEDBACK");
         }}
-        onRetryWithNewQuestions={async(): Promise<void> => {
-          if(!selectedRoleInfo) return;
+        onRetryWithNewQuestions={async (): Promise<void> => {
+          if (!selectedRoleInfo) return;
           let questions;
 
           if (isGuestLogin) {
@@ -824,7 +826,7 @@ export default function Questionnaire({
           } else if (user?.id) {
             setIsAddingQuestion(true);
             try {
-            await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
+              await fetchNewQuestionsForRetry(selectedRoleInfo, user.id, 1);
             } catch (error: unknown) {
               console.log("Error creating AI questions", error);
               //Alert display
@@ -832,7 +834,9 @@ export default function Questionnaire({
             } finally {
               setIsAddingQuestion(false);
             }
-            console.log("back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx");
+            console.log(
+              "back to Questionnaire.tsx from fetchNewQuestionsForRetry in NewQuestionsForRetry.tsx",
+            );
             questions = await getRoleQuestions(selectedRoleInfo.id, user.id);
           }
 
@@ -843,7 +847,7 @@ export default function Questionnaire({
             questions as DbQuestion[],
           );
           // const roleWithQuestions = transformToRoleQuestions(
-          // selectedRoleInfo, 
+          // selectedRoleInfo,
           // aiQuestions
           // );
           setIsAddingQuestion(false);
