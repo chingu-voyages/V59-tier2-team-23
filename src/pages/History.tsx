@@ -23,7 +23,7 @@ export default function History({ className = "", ...props }: Props): JSX.Elemen
 
   return (
     <div
-      className={`p-[1rem]  flex flex-col max-w-[40rem] w-full mx-auto  ${className}`}
+      className={`p-[1rem] flex flex-col max-w-[40rem] w-full mx-auto fluid-page-padding ${className}`}
       {...props}>
       <h1 className='text-[3rem] text-black font-bold'>History</h1>
       {allAttempts.length == 0 && <p>No history yet.</p>}

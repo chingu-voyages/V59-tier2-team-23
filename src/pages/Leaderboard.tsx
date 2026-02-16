@@ -4,7 +4,7 @@ import {
   getUserInfo,
   getLeaderBoardGlobal,
   getLeaderByBoardByRole,
-  // userPercentile,
+  userPercentile,
   getRoles,
 } from "../utils/getData"
 import { useState, useEffect } from "react"
@@ -58,7 +58,7 @@ export default function Leaderboard() {
 
   const [roleData, setRoleData] = useState<any[] | null>(null)
 
-  // const [userPercentileData, setUserPercentileData] = useState<number | null>(null)
+  const [userPercentileData, setUserPercentileData] = useState<number | null>(null)
   const [roleLeaderboards, setRoleLeaderboards] = useState<any[]>([])
   const [sortedLeaderboards, setSortedLeaderboards] = useState<LeaderboardType[][]>([])
 
@@ -114,16 +114,17 @@ export default function Leaderboard() {
       setLoadingLeaderboardData(false)
     }
 
-    // async function getUserPercentileByRole(roleId: string, score: number, totalQuestions: number) {
-    //   const userPercentileStat = await userPercentile(roleId, score, totalQuestions)
-    //   setUserPercentileData(userPercentileStat)
-    // }
+    async function getUserPercentileByRole(roleId: string, score: number, totalQuestions: number) {
+      const userPercentileStat = await userPercentile(roleId, score, totalQuestions)
+      setUserPercentileData(userPercentileStat)
+      console.log(userPercentileStat)
+    }
 
     fetchUser()
     fetchRoles()
     fetchLeaderboardData()
     /// placeholder percentile
-    // getUserPercentileByRole("12258174-d9a6-458c-8b61-2c2f469dfd1c", 10, 50)
+    getUserPercentileByRole("12258174-d9a6-458c-8b61-2c2f469dfd1c", 10, 50)
   }, [])
 
   useEffect(() => {
@@ -135,6 +136,7 @@ export default function Leaderboard() {
         roles.map((role) => getLeaderByBoardByRole(role.id)),
       )
       setRoleLeaderboards(allLeaderboards)
+      console.log("all Leaderboards for ind. roles: ", allLeaderboards)
     }
     fetchLeaderboardDataByRole()
     //////////////////////////
@@ -194,12 +196,12 @@ export default function Leaderboard() {
     return <div> Loading... </div>
   }
   return (
-    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 '>
-      <div className='text-center p-14 text-5xl '>
+    <div className='flex flex-col items-center bg-linear-to-br from-indigo-400 to-purple-500 pb-25 fluid-page-padding '>
+      <div className='text-center  text-5xl '>
         <h1>Welcome to the Leaderboard, {firstName}!</h1>
       </div>
 
-      <h1 className=' text-center text-4xl pb-6 pt-6'> Global Stats </h1>
+      <h1 className=' text-center text-4xl pb-6 pt-10'> Global Stats </h1>
       <div>
         <h1 className='font-bold text-center text-xl '>Top 10 for Studying</h1>
         <LeaderboardStatCard topTenArray={rankedByAmt || []} metricType='total_questions' />
