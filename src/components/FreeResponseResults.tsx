@@ -11,7 +11,7 @@ export default function FreeResponseResults({
 }: FreeResponseResultsProps) {
   const getScoreColor = (s: string) => {
     if (s === "1/" || s === "2/" || s === "3/") return "text-red-600";
-    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-400";
+    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-600";
     if (s === "7/" || s === "8/" || s === "9/" || s === "10")
       return "text-green-600";
     return "text-gray-500";
