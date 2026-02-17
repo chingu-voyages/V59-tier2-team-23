@@ -19,6 +19,16 @@ as well as see their overall history.
 - **Open Ended Questions:** Users are also able to practice answering some common open ended interview questions and be provided feedback generated through Gemini Flash AI.
 - **Result history and Leaderboards:** Users can see their history of scores to track improvements and progression as well as compare their scores or quiz history to other users for competitive motivation if desired.
 
+#  🧰  Tech Stack
+
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+- Supabase
+- Google Gemini Flash API
+- Netlify
+
 ## Team Documents
 
 You may find these helpful as you work together to organize your project.
@@ -41,9 +51,9 @@ your repo access and to practice PR'ing with your team _before_ you start
 coding!
 
 - Alex Thomas - Scrum Master: [GitHub](https://github.com/BagelTime) / [LinkedIn](https://linkedin.com/in/ajt11176)
-- Wael Kweder - Frontend Developer: [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kweder-a63836339/)
-- Emily Carr - Web Developer: [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
+- Wael Kweder - Developer: [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kweder-a63836339/)
+- Emily Carr - Developer: [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
 - Bryan Hoyem - Developer: [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
-- Ivan Rebolledo - Frontend Developer: [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
-- Jugraj Singh Bali - Web Developer : [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
-- Matthew Neie - Web Developer : [GitHub](https://github.com/MatthewNeie) / [LinkedIn](https://www.linkedin.com/in/matthew-neie)
+- Ivan Rebolledo - Developer: [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
+- Matthew Neie - Developer: [GitHub](https://github.com/MatthewNeie) / [LinkedIn](https://www.linkedin.com/in/matthew-neie)
+- Jugraj Singh Bali - Developer: [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
