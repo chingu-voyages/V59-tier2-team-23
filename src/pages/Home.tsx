@@ -10,7 +10,7 @@ export default function Home({ className = "", ...props }: Props): JSX.Element {
     <div
       className={`${className} h-auto flex flex-col items-center w-4/5 mx-auto text-center min-w-42.5 fluid-page-padding`}
       {...props}>
-      <img src='\images\temp-logo.png' alt='App Logo' className='h-48' />
+      <img src='\images\logo.png' alt='App Logo' className='h-48' />
       <WelcomeMessage />
       <p className='text-[1.2rem] max-w-250 fluid-section-padding'>
         Quizest is your handy source to prepare for interviewing for the most popular roles in the
