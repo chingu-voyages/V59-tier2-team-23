@@ -16,7 +16,7 @@ export default function Header({ className = "", ...props }: Props): JSX.Element
 
   let navOptions: string[] = ["home"]
   if (!isAuthLoading && user) {
-    navOptions = ["home", "roles", "geminitest", "history", "leaderboard", "logout"]
+    navOptions = ["home", "roles", "history", "leaderboard", "logout"]
   }
   if (!isAuthLoading && isGuestLogin && pathname !== "/home") {
     navOptions = ["home", "roles"]

@@ -17,7 +17,7 @@ import { saveAiQuestions } from "../utils/getData";
 export default async function fetchNewQuestionsForRetry(
   role: DbRole,
   userId: string | undefined,
-  count = 1, //***Change this if increasing the number of questions generated***
+  count = 5, //***Change this if increasing the number of questions generated***
 ) {
   const text = await handleGenerateMoreQuestions(role.name);
   console.log("back to NewQuestionsForRetry.tsx from handleGenerateMoreQuestions in MoreQuestions.tsx");

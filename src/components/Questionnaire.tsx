@@ -429,7 +429,7 @@ export default function Questionnaire({
           >
             {isAddingQuestion
               ? "Creating Question..."
-              : "Retry With More Questions"}
+              : "Retry & Add Questions"}
           </button>
         </div>
         <div className="mb-[0.5rem] sm:mb-[1.5rem] ">

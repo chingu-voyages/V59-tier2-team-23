@@ -15,7 +15,7 @@ Input:
 * [ ] I want to create a list of practice questions for the ${selectedRole} role to help me practice for face-to-face interviews with prospective employers
 
 Additional Context:
-* generate this shape. maybe for the 2 properties empty strings to change later? {
+* generate this shape. for the 2 properties userId and roleId, empty strings to change later {
   userId: string,       // we get this from Supabase, not from Gemini or Context
   roleId: string,       // we get this from the selected role, not from Gemini
 
@@ -37,7 +37,7 @@ Constraints:
 * [ ] If the role is Scrum Product Owner, the questions should also be helpful for passing the CSPO certification test
 * [ ] If the role is Web Developer or Python Developer, some of the generated questions should be about data structures and algorithms
 * [ ] If the role is UI/UX Designer, the questions should not include questions that are specific to HTML, CSS, or programming languages. They should stress UI/UX concepts and practices, like general UI design, responsiveness, and accessibility.
-* [ ] Generate exactly 1 new questions - no more, no less.
+* [ ] Generate exactly 5 new questions - no more, no less.
 
 Format:
 
