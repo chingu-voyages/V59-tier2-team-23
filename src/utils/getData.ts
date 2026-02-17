@@ -339,7 +339,6 @@ export async function saveAiQuestions(aiQuestions: AiQuestions) {
   }
   return newQuestion;
 }
-//save one ai generated questions with answers
 
 //get login user info
 export async function getUserInfo() {
