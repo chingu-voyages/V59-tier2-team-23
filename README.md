@@ -37,10 +37,52 @@ as well as see their overall history.
 
 The repository is also available in GitHub here: [GitHub](https://github.com/chingu-voyages/V59-tier2-team-23)
 
-- Alex Thomas - Scrum Master: [GitHub](https://github.com/BagelTime) / [LinkedIn](https://linkedin.com/in/ajt11176)
-- Wael Kweder - Developer: [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kweder-a63836339/)
-- Emily Carr - Developer: [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
-- Bryan Hoyem - Developer: [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
-- Ivan Rebolledo - Developer: [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
-- Matthew Neie - Developer: [GitHub](https://github.com/MatthewNeie) / [LinkedIn](https://www.linkedin.com/in/matthew-neie)
-- Jugraj Singh Bali - Developer: [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
+# ▶️ Running The Project
+
+Follow these steps within your command line interface (CLI) to run ***Quizest*** on your local machine:
+
+1. **Clone the repository** to your local system using:
+   `https://github.com/chingu-voyages/V59-tier2-team-23.git` 
+   
+2. **Navigate into the newly created project directory** using: `cd V59-tier2-team-23`
+
+3. **Install the project's dependencies** to ensure it runs smoothly: `npm install`
+
+4. **Start the development server**, launching the application in development mode with Vite using: `npm run dev`
+   - This starts a local development server. Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
+
+8. **Environment variables (.env setup)**  
+   To run **Quizest** locally, you’ll need a `.env` file in the project’s root folder with your own keys.
+
+   - **Create the `.env` file**
+     - In the root of the project (same level as `package.json`), create a new file named `.env`.
+     - Make sure the file name is exactly: `.env` (no extension).
+
+   - **Add your Supabase credentials**
+     - Sign up or log in at Supabase and create a new project.
+     - In the Supabase dashboard, go to **Project Settings → API**.
+     - Copy the **Project URL** and **anon public key**, then add them to `.env`:
+       - `VITE_SUPABASE_URL='your-supabase-project-url'`
+       - `VITE_SUPABASE_ANON_KEY='your-supabase-anon-public-key'`
+
+   - **Add your Google Gemini API key**
+     - Go to Google AI Studio and create or view an API key.
+     - Copy the key and add it to `.env`:
+       - `VITE_GEMINI_API_KEY='your-gemini-api-key'`
+
+   - **Important**
+     - Keep `.env` private and **do not commit it** to GitHub.
+     - After creating or updating `.env`, restart your dev server if it’s already running.
+
+# 👥 Our Team
+
+### Scrum Master: 
+- Alex Thomas - [GitHub](https://github.com/BagelTime) / [LinkedIn](https://linkedin.com/in/ajt11176)
+
+### Web Developers:
+- Wael Kweder - [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kweder-a63836339/)
+- Emily Carr - [GitHub](https://github.com/codingEmily) / [LinkedIn](https://www.linkedin.com/in/emily-c-2285a9277/)
+- Bryan Hoyem - [GitHub](https://github.com/bhoyem) / [LinkedIn](https://www.linkedin.com/in/bryanhoyem)
+- Ivan Rebolledo - [GitHub](https://github.com/ivannissimrch) / [LinkedIn](https://www.linkedin.com/in/ivan-rebolledo-012b17244/)
+- Matthew Neie - [GitHub](https://github.com/MatthewNeie) / [LinkedIn](https://www.linkedin.com/in/matthew-neie)
+- Jugraj Singh Bali - [GitHub](https://github.com/jugrajsinghbali) / [LinkedIn](https://www.linkedin.com/in/jugraj-singh-bali-117994268/)
