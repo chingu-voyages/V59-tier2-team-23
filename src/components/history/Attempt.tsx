@@ -22,7 +22,7 @@ export default function Attempt({ className = '', attempt, ...props }: Props): J
             </div>
             <div className={`flex justify-between w-full leading-none text-[1rem]  ${className}`} {...props}>
                 <div className='w-[6rem] flex items-center font-bold'>
-                    <span className={`${statsColor} border rounded-full p-[0.5rem] me-[0.5rem]`}>{attempt.score / attempt.total_questions * 100}%</span>
+                    <span className={`${statsColor} border rounded-full p-[0.5rem] me-[0.5rem]`}>{Math.round(attempt.score / attempt.total_questions * 100)}%</span>
                     <span className={`${statsColor} border rounded-full p-[0.5rem]`}>{attempt.score + '/' + attempt.total_questions}</span>
                 </div>
                 <NavLink to={`/history/${attempt.id}`} className='h-full p-[0.5rem] text-center w-[5rem] text-[1rem] rounded-lg bg-blue-600 py-3 text-white font-semibold
