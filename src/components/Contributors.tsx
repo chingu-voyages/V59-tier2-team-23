@@ -3,14 +3,12 @@ import { NavLink } from "react-router-dom"
 export default function Contributors() {
   const CONTRIBUTORS = [
     {
-      avatar: "/images/contibutors/AlexThomas.jpeg",
       name: "Alex Thomas",
       role: "Scrum Master",
       linkedin: "https://linkedin.com/in/ajt11176",
       github: "https://github.com/BagelTime",
     },
     {
-      avatar: "/images/contibutors/WaelKweder.jpeg",
       name: "Wael Kweder",
       role: "Frontend Developer",
       linkedin: "https://linkedin.com/in/wael-kweder-a63836339/",
@@ -18,7 +16,6 @@ export default function Contributors() {
     },
 
     {
-      avatar: "/images/contibutors/EmilyCarr.jpeg",
       name: "Emily Carr",
       role: "Web Developer",
       linkedin: "https://www.linkedin.com/in/emily-c-2285a9277/",
@@ -26,28 +23,24 @@ export default function Contributors() {
     },
 
     {
-      avatar: "/images/contibutors/bhoyem.jpeg",
       name: "Bryan Hoyem",
       role: "Developer",
       linkedin: "https://www.linkedin.com/in/bryanhoyem",
       github: "https://github.com/bhoyem",
     },
     {
-      avatar: "/images/contibutors/Ivan.jpeg",
       name: "Ivan Rebolledo",
       role: "Frontend Developer",
       linkedin: "https://www.linkedin.com/in/ivan-rebolledo-012b17244/",
       github: "https://github.com/ivannissimrch",
     },
     {
-      avatar: "/images/contibutors/JugrajSinghBali.jpeg",
       name: "Jugraj Singh Bali ",
       role: "Web Developer",
       linkedin: "https://www.linkedin.com/in/jugraj-singh-bali-117994268/",
       github: "https://github.com/jugrajsinghbali",
     },
     {
-      avatar: "/images/contibutors/MatthewNeie.jpeg",
       name: "Matthew Neie",
       role: "Web Developer",
       linkedin: "https://www.linkedin.com/in/matthew-neie",
@@ -56,17 +49,11 @@ export default function Contributors() {
   ]
 
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+    <div className='grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-[1rem]'>
       {CONTRIBUTORS.map((contributor, index) => (
         <section
           key={index}
-          className='flex items-center justify-evenly  hover:bg-gray-600 transition-colors duration-100 min-w-fit '>
-          <img
-            src={contributor.avatar}
-            alt={contributor.name}
-            className='w-16 h-16 rounded-full object-cover'
-          />
-
+          className='flex items-center justify-around hover:bg-gray-600 transition-colors duration-100 min-w-fit '>
           <div className='m-2'>
             <p className=' text-sm font-medium'>{contributor.name}</p>
             <p className='text-xs text-gray-400 w-28'>{contributor.role}</p>
