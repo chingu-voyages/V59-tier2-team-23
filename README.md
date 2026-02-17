@@ -24,6 +24,7 @@ as well as see their overall history.
 - React
 - TypeScript
 - Tailwind CSS
+- React Router
 - Vite
 - Supabase
 - Google Gemini Flash API
