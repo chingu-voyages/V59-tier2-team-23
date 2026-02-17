@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Essaycard } from "../types/questions.ts";
-import { handleGenerateFreeResponse } from "./FreeResponseAI.tsx";
 import { generateEssayFeedback } from "./FreeResponseFeedback.tsx";
 
 interface EssayCardProps {
@@ -31,15 +30,11 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
     }[]
   >([]);
 
-  const newData = handleGenerateFreeResponse(questions[0]?.role);
-
-  console.log(newData);
-
   const currentQuestion = questions[currentIndex];
 
   const getScoreColor = (s: string) => {
     if (s === "1/" || s === "2/" || s === "3/") return "text-red-600";
-    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-400";
+    if (s === "4/" || s === "5/" || s === "6/") return "text-yellow-600";
     if (s === "7/" || s === "8/" || s === "9/" || s === "10")
       return "text-green-600";
     return "text-gray-500";
@@ -58,8 +53,6 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
       const responseScore = fb.slice(7, 9);
 
       setScore(responseScore);
-
-      console.log(score);
 
       const answer = {
         id: currentQuestion.id,
@@ -92,25 +85,13 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
     setCurrentIndex((prev) => prev + 1);
   };
 
-  console.log(answers);
-
-  if (!currentQuestion) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <h2 className="text-2xl font-semibold">
-          You’ve completed the {questions[0]?.role} free response.
-        </h2>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 space-y-6 mt-6 mb-6">
         <div className="text-sm text-gray-500">
           Question {currentIndex + 1} of {questions.length}
         </div>
-        <div className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+        <div className="text-xs font-semibold uppercase tracking-wide text-gray-800">
           {currentQuestion.role}
         </div>
         <p className="text-lg font-medium text-gray-900">
@@ -121,7 +102,7 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
           onChange={(e) => setResponse(e.target.value)}
           disabled={submitted}
           placeholder="Type your response here..."
-          className="w-full min-h-[140px] rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:bg-gray-100"
+          className="w-full min-h-[140px] rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-gray-800 disabled:bg-gray-100"
         />
 
         {isLoading ? (
@@ -129,7 +110,7 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
             <h2 className="text-black text-[16px] font-semibold mb-6">
               Asking Gemini for Feedback
             </h2>
-            <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-[#3498db] animate-spin mb-6"></div>
+            <div className="w-[50px] h-[50px] rounded-full border-4 border-white/30 border-t-gray-800 animate-spin mb-6"></div>
           </div>
         ) : null}
 
@@ -137,7 +118,7 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
           <button
             onClick={handleSubmit}
             disabled={!response.trim()}
-            className="w-full rounded-lg bg-blue-600 py-2 text-white font-semibold"
+            className="w-full rounded-lg bg-gray-800 hover:bg-gray-600 py-2 text-white font-semibold"
           >
             Submit Response
           </button>
@@ -152,7 +133,7 @@ export default function EssayCard({ questions, onSubmitAll }: EssayCardProps) {
 
             <button
               onClick={handleNext}
-              className="w-full rounded-lg border border-blue-600 py-2 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition"
+              className="w-full rounded-lg border border-gray-800 py-2 text-gray-800 font-semibold hover:bg-gray-800 hover:text-white transition"
             >
               {currentIndex === questions.length - 1
                 ? "Continue"
