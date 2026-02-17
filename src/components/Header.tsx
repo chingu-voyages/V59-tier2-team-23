@@ -25,7 +25,7 @@ export default function Header({ className = "", ...props }: Props): JSX.Element
   return (
     <>
       <header
-        className={`w-full px-4 py-3 sm:px-6 bg-(--color-surface) text-white text-nowrap leading-none flex flex-col gap-4 justify-between  ${className}`}
+        className={`w-full px-4 py-3 sm:px-6 header-color pb-5 text-white text-nowrap leading-none flex flex-col gap-4 justify-between  ${className}`}
         {...props}>
         <p className='text-end'>{formatDate(date)}</p>
         <nav className='flex justify-between items-end gap-2'>
@@ -38,7 +38,7 @@ export default function Header({ className = "", ...props }: Props): JSX.Element
                 {
                   <NavLink
                     to={`${nav === "logout" ? "/" : `/${nav}`}`}
-                    className={`${nav === activeLink || activeLink === "" ? "bg-[#525151]" : ""}  p-2  flex justify-center items-center hover:bg-[#5e5c5c]`}
+                    className={`${nav === activeLink || activeLink === "" ? "bg-[#36455d]" : ""}  p-2  flex justify-center items-center hover:bg-[#2b374a]`}
                     onClick={() => {
                       if (nav === "logout") {
                         signOut()
