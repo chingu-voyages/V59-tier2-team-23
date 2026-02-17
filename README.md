@@ -29,26 +29,13 @@ as well as see their overall history.
 - Google Gemini Flash API
 - Netlify
 
-## Team Documents
+#  🌐 App Experience
 
-You may find these helpful as you work together to organize your project.
+***Quizest*** is deployed via Netlify here: [Quizest](https://quizestmain.netlify.app/)
 
-- [Team Project Ideas](./docs/team_project_ideas.md)
-- [Team Decision Log](./docs/team_decision_log.md)
+[![Quizest](./public/images/screenshot260217.png)](https://quizestmain.netlify.app/)
 
-Meeting Agenda templates (located in the `/docs` directory in this repo):
-
-- Meeting - Voyage Kickoff --> ./docs/meeting-voyage_kickoff.docx
-- Meeting - App Vision & Feature Planning --> ./docs/meeting-vision_and_feature_planning.docx
-- Meeting - Sprint Retrospective, Review, and Planning --> ./docs/meeting-sprint_retrospective_review_and_planning.docx
-- Meeting - Sprint Open Topic Session --> ./docs/meeting-sprint_open_topic_session.docx
-
-## Our Team
-
-Everyone on your team should add their name along with a link to their GitHub
-& optionally their LinkedIn profiles below. Do this in Sprint #1 to validate
-your repo access and to practice PR'ing with your team _before_ you start
-coding!
+The repository is also available in GitHub here: [GitHub](https://github.com/chingu-voyages/V59-tier2-team-23)
 
 - Alex Thomas - Scrum Master: [GitHub](https://github.com/BagelTime) / [LinkedIn](https://linkedin.com/in/ajt11176)
 - Wael Kweder - Developer: [GitHub](https://github.com/WDataW) / [LinkedIn](https://linkedin.com/in/wael-kweder-a63836339/)
