@@ -2,13 +2,13 @@ import { useAuth } from "../context/AuthContext"
 
 export default function WelcomeMessage() {
   const { user } = useAuth()
-  let message = "WELCOME TO QUIZEST"
+  let message = "Welcome to Quizest!"
 
   if (user) {
     if (user.user_metadata.full_name) {
-      message = `WELCOME BACK ${user.user_metadata.full_name}`
+      message = `Welcome back, ${user.user_metadata.full_name}!`
     } else {
-      message = "WELCOME BACK"
+      message = "Welcome back!"
     }
   }
 

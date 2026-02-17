@@ -1,23 +1,44 @@
 @import "tailwindcss";
 
 :root {
-    --color-surface: #353535;
+  --color-surface: #353535;
 }
 
 @theme {
-    --breakpoint-xs: 23rem;
+  --breakpoint-xs: 23rem;
 }
 
 @layer base {
+  html,
+  body,
+  #root,
+  .page {
+    @apply m-0 p-0 min-w-full min-h-full w-full h-full;
+  }
 
-    html,
-    body,
-    #root,
-    .page {
-        @apply m-0 p-0 min-w-full min-h-full w-full h-full;
-    }
+  button {
+    @apply cursor-pointer;
+  }
+}
 
-    button {
-        @apply cursor-pointer
-    }
+/*Emily here- creating basic classes to re-use across elements. If you want to adjust the styling, that's perfectly fine and should be easier to change one class than individually update each item. Feel free to talk to me if you don't like this set up.  */
+
+.header-color {
+  background-color: #1e2939;
+}
+.footer-color {
+  background-color: rgb(145, 170, 210);
+  /* background-color: rgb(180, 193, 212); opt B */
+  /* background-color: rgb(5, 12, 22); / opt C */
+  /* background-color: rgb(17, 18, 20); / opt D  */
+}
+
+.fluid-page-padding {
+  padding-top: clamp(1rem, 2vw + 2rem, 4rem);
+  padding-bottom: clamp(1rem, 2vw + 2rem, 4rem);
+}
+
+.fluid-section-padding {
+  padding-top: clamp(0.5rem, 1vw + 1rem, 2rem);
+  padding-bottom: clamp(0.5rem, 1vw + 1rem, 2rem);
 }
