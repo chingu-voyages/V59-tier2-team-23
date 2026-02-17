@@ -2,18 +2,22 @@
 
 <img src="./public/images/logo-on-white-background.png" alt="quizest logo">
 
-Your project's `readme` is as important to success as your code. For
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+# 💻 Overview
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point -
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+***Quizest*** is an app built with React and TypeScript that helps aspiring job seekers in the tech industry prepare for job interviews
+and potential certifications. It provides a user with basic questions that might be encountered and provides a quiz-style format to 
+answer questions with a score afterwards for self-evaluation. It also allows a user to compare their scores to other users of the platform 
+as well as see their overall history.
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+# 📲 Features
 
-> Own it & Make it your Own!
+***Quizest*** includes the following features:
+
+- **Authenticated Login:** Users are able to log in using either their Google account or their GitHub account and track their results and history.
+- **Multiple-Choice Quiz Questions:** Users can begin with a basic set of questions to answer and answers are supported with amplifying information to ensure understanding.
+- **Additional Questions On Request:** Users are able to grow their library of quiz questions by selecting to re-try quizes with new additional questions. ***Quizest*** uses Gemini Flash AI to generate additional questions for the selected role and tracks them with the accumuluated results.
+- **Open Ended Questions:** Users are also able to practice answering some common open ended interview questions and be provided feedback generated through Gemini Flash AI.
+- **Result history and Leaderboards:** Users can see their history of scores to track improvements and progression as well as compare their scores or quiz history to other users for competitive motivation if desired.
 
 ## Team Documents
 
