@@ -1,5 +1,4 @@
 import { geminiModel } from "../components/Geminifunction";
-// import existingQuestions from "../data/questions.json";
 
 export async function handleGenerateMoreQuestions(selectedRole: string) {
   const prompt = `
@@ -43,30 +42,8 @@ Format:
 
 * [ ] Do not include any preamble, introduction, or explanation - only the list of questions.
 
-
 `;
 
-// * Here are existing questions already in my library:
-// ${JSON.stringify(existingQuestions, null, 2)}
-
-// * [ ] Produce exactly 1 flashcards, numbered 1 
-// * [ ] Do not include any preamble, introduction, or explanation - only the list of questions.
-// * [ ] Return ONLY a valid JSON array of objects.
-// * [ ] Each object must have these exact fields: question, rationale, choiceA, choiceB, choiceC, choiceD, correctAnswer.
-// * [ ] correctAnswer must be one of: "A", "B", "C", or "D".
-// * [ ] Do NOT include any markdown code blocks, backticks, or text before/after the JSON.
-// * [ ] Example format:
-// [
-//   {
-//     "question": "What is...",
-//     "rationale": "Because...",
-//     "choiceA": "Option A",
-//     "choiceB": "Option B",
-//     "choiceC": "Option C",
-//     "choiceD": "Option D",
-//     "correctAnswer": "A"
-//   }
-// ]
   console.log("Prompt sent to Gemini in MoreQuestions.tsx:");
   const result = await geminiModel.generateContent(prompt);
   console.log(result);
