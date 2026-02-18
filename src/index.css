@@ -27,10 +27,7 @@
   background-color: #1e2939;
 }
 .footer-color {
-  background-color: rgb(145, 170, 210);
-  /* background-color: rgb(180, 193, 212); opt B */
-  /* background-color: rgb(5, 12, 22); / opt C */
-  /* background-color: rgb(17, 18, 20); / opt D  */
+  background-color: rgb(5, 12, 22);
 }
 
 .fluid-page-padding {
