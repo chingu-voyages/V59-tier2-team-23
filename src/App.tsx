@@ -3,6 +3,9 @@ import { Layout, Home, Fallback } from "./pages";
 import Questionnaire from "./components/Questionnaire";
 import Geminitest from "./pages/Geminitest";
 import { RedirectGuest } from "./components";
+import History from "./pages/History";
+import ReviewAttempt from "./pages/ReviewAttempt";
+import Leaderboard from "./pages/Leaderboard";
 
 export default function App() {
   return (
@@ -13,7 +16,10 @@ export default function App() {
           <Route path="home" element={<Home />} />
           <Route element={<RedirectGuest />}>
             <Route path="geminitest" element={<Geminitest />} />
+            <Route path="leaderboard" element={<Leaderboard />} />
             <Route path="roles" element={<Questionnaire />} />
+            <Route path="history" element={<History />} />
+            <Route path="history/:id" element={<ReviewAttempt />} />
             {/* wanted to make the path 'quiz' but we need to set the path in supabase first */}
             <Route path="*" element={<Fallback />} />
           </Route>

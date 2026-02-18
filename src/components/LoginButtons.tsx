@@ -65,8 +65,10 @@ export default function LoginButtons() {
   }
 
   return (
-    <Link to="/roles" className="font-bold text-[1.5rem] py-5">
-      <button className="border p-2 rounded mt-2.5">Choose Your Role</button>
+    <Link to="/roles" className="font-semibold text-[1.5rem] py-5">
+      <button className="border p-2 px-6 rounded-md mt-2.5 bg-gray-800 text-white hover:bg-gray-600">
+        Get Started
+      </button>
     </Link>
   );
 }
