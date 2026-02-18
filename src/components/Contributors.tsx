@@ -53,11 +53,7 @@ export default function Contributors() {
       {CONTRIBUTORS.map((contributor, index) => (
         <section
           key={index}
-          className='flex items-center justify-around hover:bg-gray-600 transition-colors duration-100 min-w-fit '>
-          <div className='m-2'>
-            <p className=' text-sm font-medium'>{contributor.name}</p>
-            <p className='text-xs text-gray-400 w-28'>{contributor.role}</p>
-          </div>
+          className='flex items-center justify-center hover:bg-gray-800 transition-colors duration-100 min-w-fit '>
           <div className='flex gap-2'>
             <NavLink
               className='text-sm'
@@ -82,6 +78,11 @@ export default function Contributors() {
                 className='w-8 h-8 bg-white  rounded object-cover'
               />
             </NavLink>
+          </div>
+
+          <div className='m-2'>
+            <p className=' text-sm font-medium'>{contributor.name}</p>
+            <p className='text-xs text-gray-400 w-28'>{contributor.role}</p>
           </div>
         </section>
       ))}
