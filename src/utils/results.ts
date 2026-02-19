@@ -1,16 +1,14 @@
 import type { UserAnswer } from "../types/questions"
-import { userPercentile, getUserInfo, getLeaderByBoardByRole } from "./getData"
 export type Stats = {
   correct: number
   incorrect: number
   total: number
 }
-export type UserStats = {
-  roleId: string | undefined
-  totalCorrectScore: number
-  totalIncorrect?: number
-  totalQuestions: number
-}
+export type UserPercentiles = {
+  percentile_score: number
+  percentile_studied: number
+  total_users: number
+}[]
 
 export function aggregate(answers: UserAnswer[]) {
   const stats = {
