@@ -4,6 +4,7 @@ type IndividualUserStats = {
   name: string
   place: number
   metricNumber: number
+  metricSymbol: string
 }
 
 export default function LeaderboardStatCard({
@@ -14,10 +15,12 @@ export default function LeaderboardStatCard({
   metricType: MetricType
 }) {
   let labelMetric = ""
+  let metricSymbol = ""
   if (metricType === "total_questions") {
     labelMetric = "Number of Questions"
   } else if (metricType === "average_grade") {
     labelMetric = "User's Average Grade"
+    metricSymbol = "%"
   }
   return (
     <div className='flex flex-col items-center pb-10'>
@@ -33,19 +36,24 @@ export default function LeaderboardStatCard({
             key={u.user_id}
             name={u.user_name}
             place={i + 1}
-            metricNumber={u[metricType]}></IndividualUserStat>
+            metricNumber={Math.round(u[metricType])}
+            metricSymbol={metricSymbol}></IndividualUserStat>
         ))}
       </div>
     </div>
   )
 }
 
-function IndividualUserStat({ name, place, metricNumber }: IndividualUserStats) {
+function IndividualUserStat({ name, place, metricNumber, metricSymbol }: IndividualUserStats) {
   return (
     <div className='flex relative w-100 pt-1.5 pb-1.5  border-2  border-gray-800 '>
       <div className='font-bold   left-0 pl-2'> #{place} </div>
       <div className='text-center pl-2 pr-2'>{name}</div>
-      <div className='absolute right-2'> {metricNumber} </div>
+      <div className='absolute right-2'>
+        {" "}
+        {metricNumber}
+        {metricSymbol}{" "}
+      </div>
     </div>
   )
 }
