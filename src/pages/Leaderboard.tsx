@@ -149,10 +149,7 @@ export default function Leaderboard() {
     }
   }, [leaderboardData, userData, roleLeaderboards])
 
-  // If so, display a "top ten" for every role user has studied for, both amt and grade,
-  // // and also display a userPercentile for that role
-  // Also, if we had mor users, it would be really cool to add a Xth place for the user under each Top 10, but I probably won't do it in this voyage time
-
+  // Also, if we had more users, it would be really cool to add a Xth place for the user under each Top 10, but I probably won't do it in this voyage time
   function calcUsersByAmtStudied(leaderboard: LeaderboardType[]): LeaderboardType[] {
     if (leaderboard === null || leaderboard == undefined || !leaderboard) return []
     let sortUsersByAmtStudied: LeaderboardType[] = []
