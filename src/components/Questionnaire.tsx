@@ -416,7 +416,8 @@ export default function Questionnaire({
         </h1>
         <div className="flex flex-col items-center justify-between w-full max-w-115 mb-[1rem] gap-[0.5rem]">
           <div className="flex">
-            <ResultStats stats={stats} />
+            <ResultStats stats={stats} roleId={selectedRole?.id || ""} />
+            {/* // pass only the roleId here */}
           </div>
           <div className="flex mt-4">
             <button
@@ -427,12 +428,15 @@ export default function Questionnaire({
             </button>
             <button
               onClick={onRetryWithNewQuestions}
-              className="h-[2.2rem] rounded-[0.3rem] bg-gray-800 px-3 text-white hover:bg-gray-600 ml-1"
+              className="h-[2.2rem] rounded-[0.3rem] bg-gray-800 px-3 text-white hover:bg-gray-600 ml-1 flex items-center justify-center text-center"
               disabled={isAddingQuestion}
             >
               {isAddingQuestion
-                ? "Creating Question..."
+                ? "Creating Questions..."
                 : "Retry With More Questions"}
+              {isAddingQuestion ? (
+                <div className="w-[20px] h-[20px] rounded-full border-4 border-white/30 border-t-gray-800 animate-spin ml-2"></div>
+              ) : null}
             </button>
           </div>
         </div>

@@ -31,7 +31,7 @@ export type SortedUserType = {
   metric_type?: "total_questions" | "average_grade"
 }
 
-type LeaderboardType = {
+export type LeaderboardType = {
   average_grade: number
   role_name: string
   total_questions: number
@@ -114,17 +114,9 @@ export default function Leaderboard() {
       setLoadingLeaderboardData(false)
     }
 
-    // async function getUserPercentileByRole(roleId: string, score: number, totalQuestions: number) {
-    //   const userPercentileStat = await userPercentile(roleId, score, totalQuestions)
-    //   setUserPercentileData(userPercentileStat)
-    //   console.log(userPercentileStat)
-    // }
-
     fetchUser()
     fetchRoles()
     fetchLeaderboardData()
-    /// placeholder percentile
-    // getUserPercentileByRole("12258174-d9a6-458c-8b61-2c2f469dfd1c", 10, 50)
   }, [])
 
   useEffect(() => {
@@ -140,7 +132,7 @@ export default function Leaderboard() {
     }
     fetchLeaderboardDataByRole()
     //////////////////////////
-  }, [roleData]) /// I was using [leaderboardData], Claude says use [roleData]
+  }, [roleData])
 
   /// SORT OUT ANY LEADERBOARDS THE USER IS NOT A PART OF (aka roles user has never studied for)
   useEffect(() => {
@@ -157,10 +149,7 @@ export default function Leaderboard() {
     }
   }, [leaderboardData, userData, roleLeaderboards])
 
-  // If so, display a "top ten" for every role user has studied for, both amt and grade,
-  // // and also display a userPercentile for that role
-  // Also, if we had mor users, it would be really cool to add a Xth place for the user under each Top 10, but I probably won't do it in this voyage time
-
+  // Also, if we had more users, it would be really cool to add a Xth place for the user under each Top 10, but I probably won't do it in this voyage time
   function calcUsersByAmtStudied(leaderboard: LeaderboardType[]): LeaderboardType[] {
     if (leaderboard === null || leaderboard == undefined || !leaderboard) return []
     let sortUsersByAmtStudied: LeaderboardType[] = []
